@@ -2163,3 +2163,223 @@ body {
     font-size: 0.8rem;
   }
 }
+
+/* --- MOBILE ENHANCEMENTS --- */
+@media (max-width: 600px) {
+  .login-container {
+    max-width: 98vw;
+    margin: 1.5rem auto;
+    padding: 1.5rem 0.5rem;
+    border-radius: 14px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  }
+  .login-container h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1.2rem;
+  }
+  .login-container form {
+    padding: 1rem;
+    border-radius: 10px;
+  }
+  .login-container .form-group input {
+    padding: 0.8rem 0.8rem;
+    font-size: 0.98rem;
+    border-radius: 8px;
+  }
+  .login-container button {
+    padding: 0.8rem 1rem;
+    font-size: 1rem;
+    border-radius: 8px;
+    margin-top: 1rem;
+  }
+  .app-main {
+    padding: 0.5rem;
+    max-width: 100vw;
+    min-width: 0;
+  }
+  .calendar-container {
+    border-radius: 10px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    padding: 0.5rem 0.2rem;
+  }
+  .toolbar {
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.7rem 0.2rem;
+  }
+  .toolbar button {
+    width: 100%;
+    font-size: 1rem;
+    padding: 0.7rem 0.5rem;
+    border-radius: 8px;
+  }
+  .appointment-filter {
+    padding: 1rem 0.2rem;
+  }
+  .filter-controls {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .filter-group select {
+    min-width: 0;
+    width: 100%;
+    font-size: 1rem;
+    border-radius: 8px;
+    padding: 0.7rem 0.7rem;
+  }
+  .calendar-view {
+    padding: 0.5rem 0.1rem;
+  }
+  .calendar-header {
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.5rem 0;
+  }
+  .calendar-header h2 {
+    font-size: 1.2rem;
+  }
+  .calendar-grid {
+    min-height: 350px;
+    border-radius: 8px;
+  }
+  .weekday {
+    padding: 0.7rem 0.2rem;
+    font-size: 0.8rem;
+  }
+  .calendar-day {
+    min-height: 50px;
+    padding: 0.1rem;
+    font-size: 0.9rem;
+  }
+  .day-number {
+    font-size: 0.95rem;
+  }
+  .appointments {
+    font-size: 0.75rem;
+  }
+  .appointment-indicator {
+    font-size: 0.75rem;
+    border-radius: 7px;
+    min-height: 24px;
+    padding: 0.3rem 0.5rem;
+  }
+  .more-appointments {
+    font-size: 0.7rem;
+    border-radius: 6px;
+    padding: 0.2rem 0.3rem;
+  }
+  .form-container {
+    padding: 0.7rem;
+    border-radius: 10px;
+    width: 99vw;
+    max-width: 99vw;
+  }
+  .appointment-form h3 {
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+  }
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+  .form-actions {
+    flex-direction: column;
+    gap: 0.5rem;
+    padding-top: 1rem;
+  }
+  .btn-primary, .btn-secondary {
+    padding: 0.7rem 1rem;
+    font-size: 0.95rem;
+    border-radius: 8px;
+  }
+  .delete-btn {
+    padding: 0.7rem 1rem;
+    font-size: 0.95rem;
+    border-radius: 8px;
+  }
+}
+
+@media (max-width: 600px) {
+  .calendar-view {
+    padding: 0.2rem 0.1rem;
+  }
+  .calendar-header {
+    flex-direction: column;
+    gap: 0.3rem;
+    padding: 0.3rem 0;
+    margin-bottom: 1rem;
+  }
+  .calendar-header h2 {
+    font-size: 1rem;
+  }
+  .calendar-header button {
+    font-size: 1rem;
+    padding: 0.5rem 0.7rem;
+    border-radius: 8px;
+  }
+  .calendar-grid {
+    min-height: unset;
+    border-radius: 6px;
+    grid-template-columns: repeat(7, minmax(32px, 1fr));
+    gap: 1px;
+    font-size: 0.8rem;
+    overflow-x: auto;
+    max-width: 100vw;
+  }
+  .weekday {
+    padding: 0.5rem 0.1rem;
+    font-size: 0.7rem;
+  }
+  .calendar-day {
+    min-height: 38px;
+    padding: 0.05rem;
+    font-size: 0.7rem;
+    border-radius: 4px;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .day-number {
+    font-size: 0.8rem;
+    margin-bottom: 0.2rem;
+  }
+  .appointments {
+    font-size: 0.65rem;
+    max-height: 2.5rem;
+    min-height: 0;
+  }
+  .appointment-indicator {
+    font-size: 0.65rem;
+    border-radius: 5px;
+    min-height: 16px;
+    padding: 0.15rem 0.3rem;
+    margin-bottom: 0.1rem;
+  }
+  .more-appointments {
+    font-size: 0.6rem;
+    border-radius: 4px;
+    padding: 0.1rem 0.2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .calendar-header h2 {
+    font-size: 0.9rem;
+  }
+  .calendar-grid {
+    grid-template-columns: repeat(7, minmax(28px, 1fr));
+    font-size: 0.7rem;
+  }
+  .calendar-day {
+    min-height: 28px;
+    font-size: 0.65rem;
+  }
+  .day-number {
+    font-size: 0.7rem;
+  }
+}
+
+/* Make sure no horizontal scroll on mobile */
+body, html, #root, .App {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
