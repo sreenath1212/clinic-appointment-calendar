@@ -80,6 +80,7 @@ const MobileDayView = ({ date, appointments, onAppointmentClick, onAddAppointmen
           type="date"
           value={selectedDate.toISOString().split('T')[0]}
           onChange={handleDateChange}
+          min={new Date().toISOString().split('T')[0]}
           style={{ marginRight: '1rem', padding: '0.5rem', borderRadius: 4, border: '1px solid #ccc' }}
         />
         <h2 style={{ flex: 1 }}>{formatDate(selectedDate)}</h2>

@@ -110,6 +110,16 @@ export const validateAppointment = (appointment) => {
     errors.push('Duration must be between 15 and 240 minutes');
   }
   
+  // Check if appointment is in the past
+  if (appointment.date) {
+    const appointmentDateTime = new Date(appointment.date);
+    const now = new Date();
+    
+    if (appointmentDateTime <= now) {
+      errors.push('Cannot create appointments in the past. Please select a future date and time.');
+    }
+  }
+  
   return errors;
 };
 

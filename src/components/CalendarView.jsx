@@ -80,6 +80,12 @@ const CalendarView = ({ appointments, onDateSelect, onAppointmentClick, onDelete
     return date.toDateString() === new Date().toDateString();
   };
 
+  const isPastDate = (date) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return date < today;
+  };
+
   const handleDateClick = (date) => {
     onDateSelect(date);
   };
@@ -122,9 +128,9 @@ const CalendarView = ({ appointments, onDateSelect, onAppointmentClick, onDelete
             return (
               <div
                 key={index}
-                className={`calendar-day ${!isCurrentMonth ? 'other-month' : ''} ${isToday(date) ? 'today' : ''}`}
-                onClick={isCurrentMonth ? () => handleDateClick(date) : undefined}
-                style={{ cursor: isCurrentMonth ? 'pointer' : 'default' }}
+                className={`calendar-day ${!isCurrentMonth ? 'other-month' : ''} ${isToday(date) ? 'today' : ''} ${isPastDate(date) ? 'past-date' : ''}`}
+                onClick={isCurrentMonth && !isPastDate(date) ? () => handleDateClick(date) : undefined}
+                style={{ cursor: isCurrentMonth && !isPastDate(date) ? 'pointer' : 'default' }}
               >
                 <span className="day-number">{date.getDate()}</span>
                 {isCurrentMonth && (

@@ -33,7 +33,8 @@ const AppointmentForm = ({ appointment, onSave, onCancel }) => {
     } else {
       // Set default date to today
       const today = new Date().toISOString().split('T')[0];
-      setFormData(prev => ({ ...prev, date: today }));
+      const currentTime = new Date().toTimeString().slice(0, 5); // HH:MM format
+      setFormData(prev => ({ ...prev, date: today, time: currentTime }));
     }
   }, [appointment]);
 
@@ -43,6 +44,20 @@ const AppointmentForm = ({ appointment, onSave, onCancel }) => {
       ...prev,
       [name]: value
     }));
+    
+    // If date is changed to today, update time to current time if it's in the past
+    if (name === 'date' && value === new Date().toISOString().split('T')[0]) {
+      const currentTime = new Date().toTimeString().slice(0, 5);
+      const currentFormTime = formData.time;
+      
+      // If current form time is in the past, update it
+      if (currentFormTime < currentTime) {
+        setFormData(prev => ({
+          ...prev,
+          time: currentTime
+        }));
+      }
+    }
   };
 
   const handleSubmit = (e) => {
@@ -52,11 +67,21 @@ const AppointmentForm = ({ appointment, onSave, onCancel }) => {
       alert('Please fill in all required fields');
       return;
     }
+
+    // Validate date and time - prevent past appointments
+    const selectedDateTime = new Date(formData.date + 'T' + formData.time);
+    const now = new Date();
+    
+    if (selectedDateTime <= now) {
+      alert('Cannot create appointments in the past. Please select a future date and time.');
+      return;
+    }
+
     // Create appointment object
     const appointmentData = {
       ...formData,
       id: appointment ? appointment.id : Date.now().toString(),
-      date: new Date(formData.date + 'T' + formData.time).toISOString()
+      date: selectedDateTime.toISOString()
     };
     onSave(appointmentData);
   };
@@ -116,6 +141,7 @@ const AppointmentForm = ({ appointment, onSave, onCancel }) => {
               name="date"
               value={formData.date}
               onChange={handleChange}
+              min={new Date().toISOString().split('T')[0]}
               required
             />
           </div>
@@ -127,6 +153,7 @@ const AppointmentForm = ({ appointment, onSave, onCancel }) => {
               name="time"
               value={formData.time}
               onChange={handleChange}
+              min={formData.date === new Date().toISOString().split('T')[0] ? new Date().toTimeString().slice(0, 5) : undefined}
               required
             />
           </div>
