@@ -7,8 +7,14 @@ import MobileDayView from './components/MobileDayView';
 import { getAppointments, addAppointment, updateAppointment, deleteAppointment, initializeStorage } from './utils/localStorageHelpers';
 import { authenticateUser, getCurrentUser, setCurrentUser, logout } from './utils/localStorageHelpers';
 
+const STAFF_EMAIL = 'staff@clinic.com';
+const STAFF_PASSWORD = '123456';
+const SESSION_KEY = 'clinic_staff_logged_in';
+
 function App() {
-  const [user, setUser] = useState(null);
+  const [loggedIn, setLoggedIn] = useState(() => {
+    return localStorage.getItem(SESSION_KEY) === 'true';
+  });
   const [appointments, setAppointments] = useState([]);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [selectedAppointment, setSelectedAppointment] = useState(null);
@@ -17,41 +23,31 @@ function App() {
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
   useEffect(() => {
-    // Initialize storage with sample data on first run
-    initializeStorage();
-    
-    // Load appointments
-    const loadedAppointments = getAppointments();
-    setAppointments(loadedAppointments);
-    
-    // Check if user is already logged in
-    const currentUser = getCurrentUser();
-    if (currentUser) {
-      setUser(currentUser);
+    // Load appointments from localStorage or initialize
+    const stored = localStorage.getItem('clinic_appointments');
+    if (stored) {
+      setAppointments(JSON.parse(stored));
     }
-    
     // Handle window resize for mobile detection
     const handleResize = () => {
       setIsMobile(window.innerWidth <= 768);
     };
-    
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const handleLogin = (credentials) => {
-    const authenticatedUser = authenticateUser(credentials.username, credentials.password);
-    if (authenticatedUser) {
-      setUser(authenticatedUser);
-      setCurrentUser(authenticatedUser);
+  const handleLogin = ({ email, password }) => {
+    if (email === STAFF_EMAIL && password === STAFF_PASSWORD) {
+      setLoggedIn(true);
+      localStorage.setItem(SESSION_KEY, 'true');
     } else {
       alert('Invalid credentials. Please try again.');
     }
   };
 
   const handleLogout = () => {
-    setUser(null);
-    logout();
+    setLoggedIn(false);
+    localStorage.removeItem(SESSION_KEY);
   };
 
   const handleDateSelect = (date) => {
@@ -104,7 +100,7 @@ function App() {
     setSelectedAppointment(null);
   };
 
-  if (!user) {
+  if (!loggedIn) {
     return (
       <div className="App">
         <Login onLogin={handleLogin} />
@@ -117,7 +113,7 @@ function App() {
       <header className="app-header">
         <h1>Clinic Calendar</h1>
         <div className="user-info">
-          <span>Welcome, {user.name}</span>
+          <span>Welcome, Staff</span>
           <button onClick={handleLogout} className="logout-btn">Logout</button>
         </div>
       </header>

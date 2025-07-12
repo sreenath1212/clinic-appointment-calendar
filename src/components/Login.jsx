@@ -2,13 +2,12 @@ import React, { useState } from 'react';
 
 const Login = ({ onLogin }) => {
   const [credentials, setCredentials] = useState({
-    username: '',
+    email: '',
     password: ''
   });
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Add authentication logic here
     onLogin(credentials);
   };
 
@@ -24,12 +23,12 @@ const Login = ({ onLogin }) => {
       <h2>Clinic Calendar Login</h2>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
-          <label htmlFor="username">Username:</label>
+          <label htmlFor="email">Email:</label>
           <input
-            type="text"
-            id="username"
-            name="username"
-            value={credentials.username}
+            type="email"
+            id="email"
+            name="email"
+            value={credentials.email}
             onChange={handleChange}
             required
           />
