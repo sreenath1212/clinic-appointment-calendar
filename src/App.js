@@ -261,7 +261,7 @@ function App() {
             </div>
           </div>
         ) : (
-          <div className="calendar-container">
+          <div className={`calendar-container ${viewMode === 'calendar' ? 'calendar-view-active' : ''}`}>
             <div className="toolbar">
               {isMobile ? (
                 <>

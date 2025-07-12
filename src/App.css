@@ -1633,6 +1633,16 @@ body {
   position: relative;
 }
 
+/* When calendar view is active, make mobile day view background white */
+.calendar-view-active .mobile-day-view {
+  background: white;
+}
+
+/* Dark mode: When calendar view is active, make mobile day view background dark */
+.App.dark-mode .calendar-view-active .mobile-day-view {
+  background: #2d2d2d;
+}
+
 /* Add a subtle indicator that this is the primary mobile view */
 .mobile-day-view::before {
   content: '📱 Mobile View';
