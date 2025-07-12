@@ -227,24 +227,49 @@ function App() {
         ) : (
           <div className="calendar-container">
             <div className="toolbar">
-              <button 
-                onClick={() => setViewMode('calendar')}
-                className={viewMode === 'calendar' ? 'active' : ''}
-              >
-                Calendar View
-              </button>
-              <button 
-                onClick={() => setViewMode('mobile')}
-                className={viewMode === 'mobile' ? 'active' : ''}
-              >
-                Day View
-              </button>
-              <button 
-                onClick={() => handleAddAppointment(new Date())}
-                className="add-btn"
-              >
-                + New Appointment
-              </button>
+              {isMobile ? (
+                <>
+                  <button 
+                    onClick={() => setViewMode('mobile')}
+                    className={viewMode === 'mobile' ? 'active' : ''}
+                  >
+                    Day View
+                  </button>
+                  <button 
+                    onClick={() => setViewMode('calendar')}
+                    className={viewMode === 'calendar' ? 'active' : ''}
+                  >
+                    Calendar View
+                  </button>
+                  <button 
+                    onClick={() => handleAddAppointment(new Date())}
+                    className="add-btn"
+                  >
+                    + New Appointment
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button 
+                    onClick={() => setViewMode('calendar')}
+                    className={viewMode === 'calendar' ? 'active' : ''}
+                  >
+                    Calendar View
+                  </button>
+                  <button 
+                    onClick={() => setViewMode('mobile')}
+                    className={viewMode === 'mobile' ? 'active' : ''}
+                  >
+                    Day View
+                  </button>
+                  <button 
+                    onClick={() => handleAddAppointment(new Date())}
+                    className="add-btn"
+                  >
+                    + New Appointment
+                  </button>
+                </>
+              )}
             </div>
 
             {viewMode === 'calendar' && (
