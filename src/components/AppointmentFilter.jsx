@@ -47,7 +47,7 @@ const AppointmentFilter = ({ onFilterChange }) => {
             value={filters.doctorId}
             onChange={(e) => handleFilterChange('doctorId', e.target.value)}
           >
-            <option value="">Select Doctor</option>
+            <option value="">All Doctors</option>
             {entities.doctors.map(doctor => (
               <option key={doctor.id} value={doctor.id}>{doctor.name}</option>
             ))}
@@ -61,7 +61,7 @@ const AppointmentFilter = ({ onFilterChange }) => {
             value={filters.patientId}
             onChange={(e) => handleFilterChange('patientId', e.target.value)}
           >
-            <option value="">Select Patient</option>
+            <option value="">All Patients</option>
             {entities.patients.map(patient => (
               <option key={patient.id} value={patient.id}>{patient.name}</option>
             ))}
@@ -76,7 +76,7 @@ const AppointmentFilter = ({ onFilterChange }) => {
             onChange={(e) => handleFilterChange('type', e.target.value)}
           >
             <option value="">Select Type</option>
-            {appointmentTypes.slice(1).map(type => (
+            {appointmentTypes.map(type => (
               <option key={type.value} value={type.value}>{type.label}</option>
             ))}
           </select>
