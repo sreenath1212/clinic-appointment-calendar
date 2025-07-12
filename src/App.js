@@ -29,8 +29,16 @@ function App() {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [selectedAppointment, setSelectedAppointment] = useState(null);
   const [showForm, setShowForm] = useState(false);
-  const [viewMode, setViewMode] = useState('calendar'); // 'calendar' or 'mobile'
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  // Set default view mode based on device type - mobile defaults to day view
+  const [viewMode, setViewMode] = useState(() => {
+    const savedViewMode = localStorage.getItem('clinic_view_mode');
+    if (savedViewMode) {
+      return savedViewMode;
+    }
+    // Default to mobile view on mobile devices, calendar view on desktop
+    return window.innerWidth <= 768 ? 'mobile' : 'calendar';
+  });
   const [isDarkMode, setIsDarkMode] = useState(() => {
     return localStorage.getItem('clinic_dark_mode') === 'true';
   });
@@ -47,11 +55,17 @@ function App() {
     
     // Handle window resize for mobile detection
     const handleResize = () => {
-      setIsMobile(window.innerWidth <= 768);
+      const newIsMobile = window.innerWidth <= 768;
+      setIsMobile(newIsMobile);
+      
+      // Auto-switch to mobile view when screen becomes mobile-sized
+      if (newIsMobile && viewMode === 'calendar') {
+        setViewMode('mobile');
+      }
     };
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  }, [viewMode]);
 
   // Persist appointments to localStorage whenever appointments state changes
   useEffect(() => {
@@ -62,6 +76,11 @@ function App() {
   useEffect(() => {
     localStorage.setItem('clinic_dark_mode', isDarkMode.toString());
   }, [isDarkMode]);
+
+  // Persist view mode preference to localStorage
+  useEffect(() => {
+    localStorage.setItem('clinic_view_mode', viewMode);
+  }, [viewMode]);
 
   const handleLogin = ({ email, password }) => {
     if (email === STAFF_EMAIL && password === STAFF_PASSWORD) {
@@ -79,7 +98,8 @@ function App() {
 
   const handleDateSelect = (date) => {
     setSelectedDate(date);
-    if (isMobile) {
+    // Auto-switch to mobile view on mobile devices when selecting a date
+    if (isMobile && viewMode === 'calendar') {
       setViewMode('mobile');
     }
     // Open the form to add a new appointment for the selected date
@@ -129,8 +149,6 @@ function App() {
     setShowForm(false);
     setSelectedAppointment(null);
   };
-
-
 
   const handleCancelForm = () => {
     setShowForm(false);
