@@ -19,13 +19,13 @@ const MobileDayView = ({ date, appointments, onAppointmentClick, onAddAppointmen
     loadEntities().then(setEntities);
   }, []);
 
-  // Generate visible days (7 days before and after selected date)
+  // Generate visible days starting from selected date, then subsequent days
   useEffect(() => {
     const days = [];
     const startDate = new Date(selectedDate);
-    startDate.setDate(startDate.getDate() - 7);
     
-    for (let i = 0; i < 15; i++) {
+    // Start from the selected date and show 14 days total
+    for (let i = 0; i < 14; i++) {
       const dayDate = new Date(startDate);
       dayDate.setDate(startDate.getDate() + i);
       days.push(dayDate);
@@ -42,6 +42,27 @@ const MobileDayView = ({ date, appointments, onAppointmentClick, onAddAppointmen
     const newDate = new Date(selectedDate);
     newDate.setDate(selectedDate.getDate() + direction);
     setSelectedDate(newDate);
+  };
+
+  // Get exact dates for today, yesterday, and tomorrow
+  const getToday = () => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return today;
+  };
+
+  const getYesterday = () => {
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    yesterday.setHours(0, 0, 0, 0);
+    return yesterday;
+  };
+
+  const getTomorrow = () => {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(0, 0, 0, 0);
+    return tomorrow;
   };
 
   const formatTime12Hour = (timeString) => {
@@ -147,19 +168,19 @@ const MobileDayView = ({ date, appointments, onAppointmentClick, onAddAppointmen
       <div className="quick-day-nav">
         <button 
           className="quick-nav-btn"
-          onClick={() => navigateToDay(-1)}
+          onClick={() => setSelectedDate(getYesterday())}
         >
           Yesterday
         </button>
         <button 
           className="quick-nav-btn today-btn"
-          onClick={() => setSelectedDate(new Date())}
+          onClick={() => setSelectedDate(getToday())}
         >
           Today
         </button>
         <button 
           className="quick-nav-btn"
-          onClick={() => navigateToDay(1)}
+          onClick={() => setSelectedDate(getTomorrow())}
         >
           Tomorrow
         </button>
