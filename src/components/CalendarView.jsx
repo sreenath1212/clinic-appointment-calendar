@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 
 const loadEntities = async () => {
   const data = await fetch(process.env.PUBLIC_URL + '/data/clinicEntities.json').then(res => res.json());
@@ -10,15 +10,7 @@ const CalendarView = ({ appointments, onDateSelect, onAppointmentClick, onDelete
   const [calendarDays, setCalendarDays] = useState([]);
   const [entities, setEntities] = useState({ patients: [], doctors: [] });
 
-  useEffect(() => {
-    generateCalendarDays();
-  }, [currentDate]);
-
-  useEffect(() => {
-    loadEntities().then(setEntities);
-  }, []);
-
-  const generateCalendarDays = () => {
+  const generateCalendarDays = useCallback(() => {
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth();
     const firstDay = new Date(year, month, 1);
@@ -54,7 +46,15 @@ const CalendarView = ({ appointments, onDateSelect, onAppointmentClick, onDelete
     }
     
     setCalendarDays(days);
-  };
+  }, [currentDate]);
+
+  useEffect(() => {
+    generateCalendarDays();
+  }, [generateCalendarDays]);
+
+  useEffect(() => {
+    loadEntities().then(setEntities);
+  }, []);
 
   const getAppointmentsForDate = (date) => {
     return appointments.filter(appointment => {
@@ -79,10 +79,6 @@ const CalendarView = ({ appointments, onDateSelect, onAppointmentClick, onDelete
     const ampm = hour >= 12 ? 'PM' : 'AM';
     const displayHour = hour % 12 || 12;
     return `${displayHour}:${minutes} ${ampm}`;
-  };
-
-  const isCurrentMonth = (date) => {
-    return date.getMonth() === currentDate.getMonth();
   };
 
   const isToday = (date) => {

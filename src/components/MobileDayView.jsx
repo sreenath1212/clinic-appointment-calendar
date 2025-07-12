@@ -10,7 +10,6 @@ const MobileDayView = ({ date, appointments, onAppointmentClick, onAddAppointmen
   const [entities, setEntities] = useState({ patients: [], doctors: [] });
   const [visibleDays, setVisibleDays] = useState([]);
   const scrollContainerRef = useRef(null);
-  const [currentDayIndex, setCurrentDayIndex] = useState(0);
 
   useEffect(() => {
     setSelectedDate(date);
@@ -32,7 +31,6 @@ const MobileDayView = ({ date, appointments, onAppointmentClick, onAddAppointmen
       days.push(dayDate);
     }
     setVisibleDays(days);
-    setCurrentDayIndex(7); // Selected date is in the middle
   }, [selectedDate]);
 
   const handleDateChange = (e) => {
@@ -44,19 +42,6 @@ const MobileDayView = ({ date, appointments, onAppointmentClick, onAddAppointmen
     const newDate = new Date(selectedDate);
     newDate.setDate(selectedDate.getDate() + direction);
     setSelectedDate(newDate);
-  };
-
-  const scrollToDay = (dayIndex) => {
-    if (scrollContainerRef.current) {
-      const dayElement = scrollContainerRef.current.children[dayIndex];
-      if (dayElement) {
-        dayElement.scrollIntoView({ 
-          behavior: 'smooth', 
-          block: 'start',
-          inline: 'nearest'
-        });
-      }
-    }
   };
 
   const formatTime12Hour = (timeString) => {
