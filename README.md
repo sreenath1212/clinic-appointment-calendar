@@ -1,3 +1,7 @@
+# Clinic Appointment Calendar
+
+🚀 Live Demo: [Click Here](https://SREENATH1212.github.io/clinic-appointment-calendar)
+
 # 🏥 Clinic Appointment Calendar
 
 A modern, responsive web application for managing clinic appointments with a beautiful calendar interface, built with React.
