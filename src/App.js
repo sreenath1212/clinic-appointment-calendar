@@ -13,7 +13,8 @@ import {
   updateAppointmentInState,
   deleteAppointmentFromState,
   validateAppointment,
-  checkForConflicts
+  checkForConflicts,
+  clearAppointmentsFromStorage
 } from './utils/appointmentStateManager';
 
 const STAFF_EMAIL = 'staff@clinic.com';
@@ -123,7 +124,7 @@ function App() {
   // React state management for appointments
   const handleSaveAppointment = (appointmentData) => {
     // Validate appointment data
-    const errors = validateAppointment(appointmentData);
+    const errors = validateAppointment(appointmentData, !!selectedAppointment);
     if (errors.length > 0) {
       alert('Please fix the following errors:\n' + errors.join('\n'));
       return;
@@ -158,10 +159,18 @@ function App() {
   };
 
   const handleDeleteAppointment = (appointmentId) => {
+    console.log('handleDeleteAppointment called with ID:', appointmentId);
     if (window.confirm('Are you sure you want to delete this appointment?')) {
-      setAppointments(prevAppointments => 
-        deleteAppointmentFromState(prevAppointments, appointmentId)
-      );
+      console.log('Delete confirmed, updating appointments state');
+      setAppointments(prevAppointments => {
+        console.log('Previous appointments:', prevAppointments);
+        const updated = deleteAppointmentFromState(prevAppointments, appointmentId);
+        console.log('Updated appointments:', updated);
+        return updated;
+      });
+      // Close the form if it's open
+      setShowForm(false);
+      setSelectedAppointment(null);
     }
   };
 
@@ -171,6 +180,16 @@ function App() {
 
   const handleDarkModeToggle = () => {
     setIsDarkMode(!isDarkMode);
+  };
+
+  // Debug function to test delete functionality
+  const handleDebugClear = () => {
+    if (window.confirm('Clear all appointments and reset to sample data?')) {
+      clearAppointmentsFromStorage();
+      const initialAppointments = loadAppointmentsFromStorage();
+      setAppointments(initialAppointments);
+      alert('Appointments reset to sample data');
+    }
   };
 
   // Filter appointments based on current filters
@@ -196,6 +215,9 @@ function App() {
         <div className="user-info">
           <DarkModeToggle isDarkMode={isDarkMode} onToggle={handleDarkModeToggle} />
           <span>Welcome, Staff</span>
+          <button onClick={handleDebugClear} className="logout-btn" style={{ marginRight: '10px' }}>
+            Debug Reset
+          </button>
           <button onClick={handleLogout} className="logout-btn">Logout</button>
         </div>
       </header>

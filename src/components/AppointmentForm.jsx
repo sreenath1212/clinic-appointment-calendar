@@ -25,16 +25,31 @@ const AppointmentForm = ({ appointment, onSave, onCancel }) => {
 
   useEffect(() => {
     if (appointment) {
+      // Handle existing appointment data
+      const appointmentDate = new Date(appointment.date);
+      const dateString = appointmentDate.toISOString().split('T')[0];
+      const timeString = appointment.time || appointmentDate.toTimeString().slice(0, 5);
+      
       setFormData({
         ...appointment,
-        date: appointment.date ? new Date(appointment.date).toISOString().split('T')[0] : '',
-        time: appointment.time || ''
+        date: dateString,
+        time: timeString
       });
     } else {
-      // Set default date to today
+      // Set default values for new appointment
       const today = new Date().toISOString().split('T')[0];
-      const currentTime = new Date().toTimeString().slice(0, 5); // HH:MM format
-      setFormData(prev => ({ ...prev, date: today, time: currentTime }));
+      const currentTime = new Date().toTimeString().slice(0, 5);
+      setFormData({
+        patientId: '',
+        doctorId: '',
+        date: today,
+        time: currentTime,
+        duration: 30,
+        type: 'consultation',
+        notes: '',
+        phone: '',
+        email: ''
+      });
     }
   }, [appointment]);
 
@@ -71,27 +86,30 @@ const AppointmentForm = ({ appointment, onSave, onCancel }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    
     // Validate required fields
     if (!formData.patientId || !formData.doctorId || !formData.date || !formData.time) {
       alert('Please fill in all required fields');
       return;
     }
 
-    // Validate date and time - prevent past appointments
+    // Create the full datetime string
     const selectedDateTime = new Date(formData.date + 'T' + formData.time);
     const now = new Date();
     
-    if (selectedDateTime <= now) {
+    // For editing existing appointments, allow the same time if it's today
+    if (!appointment && selectedDateTime <= now) {
       alert('Cannot create appointments in the past. Please select a future date and time.');
       return;
     }
 
-    // Create appointment object
+    // Create appointment object with proper date format
     const appointmentData = {
       ...formData,
       id: appointment ? appointment.id : Date.now().toString(),
       date: selectedDateTime.toISOString()
     };
+    
     onSave(appointmentData);
   };
 
@@ -104,6 +122,14 @@ const AppointmentForm = ({ appointment, onSave, onCancel }) => {
   ];
 
   const durationOptions = [15, 30, 45, 60, 90, 120];
+
+  // Calculate minimum time for today's appointments
+  const getMinTime = () => {
+    if (formData.date === new Date().toISOString().split('T')[0]) {
+      return new Date().toTimeString().slice(0, 5);
+    }
+    return undefined;
+  };
 
   return (
     <div className="appointment-form">
@@ -162,7 +188,7 @@ const AppointmentForm = ({ appointment, onSave, onCancel }) => {
               name="time"
               value={formData.time}
               onChange={handleChange}
-              min={formData.date === new Date().toISOString().split('T')[0] ? new Date().toTimeString().slice(0, 5) : undefined}
+              min={getMinTime()}
               required
             />
             {formData.time && (

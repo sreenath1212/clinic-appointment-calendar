@@ -55,10 +55,24 @@ export const loadAppointmentsFromStorage = () => {
 // Save appointments to localStorage
 export const saveAppointmentsToStorage = (appointments) => {
   try {
+    console.log('Saving appointments to localStorage:', appointments);
     localStorage.setItem(APPOINTMENTS_KEY, JSON.stringify(appointments));
+    console.log('Appointments saved successfully');
     return true;
   } catch (error) {
     console.error('Error saving appointments to localStorage:', error);
+    return false;
+  }
+};
+
+// Clear appointments from localStorage (for testing)
+export const clearAppointmentsFromStorage = () => {
+  try {
+    localStorage.removeItem(APPOINTMENTS_KEY);
+    console.log('Appointments cleared from localStorage');
+    return true;
+  } catch (error) {
+    console.error('Error clearing appointments from localStorage:', error);
     return false;
   }
 };
@@ -75,7 +89,18 @@ export const updateAppointmentInState = (appointments, updatedAppointment) => {
 };
 
 export const deleteAppointmentFromState = (appointments, appointmentId) => {
-  return appointments.filter(appointment => appointment.id !== appointmentId);
+  console.log('Deleting appointment with ID:', appointmentId, 'Type:', typeof appointmentId);
+  console.log('Current appointments:', appointments);
+  
+  const filtered = appointments.filter(appointment => {
+    console.log('Checking appointment ID:', appointment.id, 'Type:', typeof appointment.id);
+    const shouldKeep = appointment.id !== appointmentId && appointment.id !== appointmentId.toString();
+    console.log('Should keep appointment:', shouldKeep);
+    return shouldKeep;
+  });
+  
+  console.log('Filtered appointments:', filtered);
+  return filtered;
 };
 
 // Utility functions for appointment management
@@ -87,7 +112,7 @@ export const getAppointmentsByDate = (appointments, date) => {
   });
 };
 
-export const validateAppointment = (appointment) => {
+export const validateAppointment = (appointment, isEditing = false) => {
   const errors = [];
   
   if (!appointment.patientId) {
@@ -110,12 +135,15 @@ export const validateAppointment = (appointment) => {
     errors.push('Duration must be between 15 and 240 minutes');
   }
   
-  // Check if appointment is in the past
-  if (appointment.date) {
+  // Check if appointment is in the past (only for new appointments)
+  if (appointment.date && !isEditing) {
     const appointmentDateTime = new Date(appointment.date);
     const now = new Date();
     
-    if (appointmentDateTime <= now) {
+    // Allow a small buffer (5 minutes) for appointments being created
+    const bufferTime = new Date(now.getTime() + 5 * 60000);
+    
+    if (appointmentDateTime <= bufferTime) {
       errors.push('Cannot create appointments in the past. Please select a future date and time.');
     }
   }

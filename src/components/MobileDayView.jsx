@@ -289,7 +289,15 @@ const MobileDayView = ({ date, appointments, onAppointmentClick, onAddAppointmen
                       </div>
                       
                       <div className="appointment-actions">
-                        <button className="action-btn">Edit</button>
+                        <button 
+                          className="action-btn"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onAppointmentClick(appointment);
+                          }}
+                        >
+                          Edit
+                        </button>
                         <button 
                           className="action-btn delete-action-btn"
                           onClick={(e) => {
