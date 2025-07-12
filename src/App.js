@@ -82,6 +82,9 @@ function App() {
     if (isMobile) {
       setViewMode('mobile');
     }
+    // Open the form to add a new appointment for the selected date
+    setSelectedAppointment(null);
+    setShowForm(true);
   };
 
   const handleAppointmentClick = (appointment) => {
