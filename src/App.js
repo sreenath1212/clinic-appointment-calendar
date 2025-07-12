@@ -58,8 +58,10 @@ function App() {
       const newIsMobile = window.innerWidth <= 768;
       setIsMobile(newIsMobile);
       
-      // Auto-switch to mobile view when screen becomes mobile-sized
-      if (newIsMobile && viewMode === 'calendar') {
+      // Only auto-switch to mobile view if no view mode has been saved
+      // This prevents auto-switching when user explicitly chose calendar view
+      const savedViewMode = localStorage.getItem('clinic_view_mode');
+      if (newIsMobile && !savedViewMode && viewMode === 'calendar') {
         setViewMode('mobile');
       }
     };

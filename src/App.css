@@ -1124,7 +1124,7 @@ body {
     transition: all 0.3s ease;
   }
   
-  /* Make day view button more prominent on mobile (now first button) */
+  /* Make day view button more prominent on mobile */
   .toolbar button:nth-child(1) {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
@@ -1134,6 +1134,21 @@ body {
   }
   
   .toolbar button:nth-child(1):hover {
+    background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+    transform: scale(1.05) translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+  }
+  
+  /* Override styling when calendar view is active on mobile */
+  .toolbar button:nth-child(2).active {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-color: transparent;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    transform: scale(1.05);
+  }
+  
+  .toolbar button:nth-child(2).active:hover {
     background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
     transform: scale(1.05) translateY(-2px);
     box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
