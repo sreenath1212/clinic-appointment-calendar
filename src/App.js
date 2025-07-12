@@ -4,6 +4,8 @@ import Login from './components/Login';
 import CalendarView from './components/CalendarView';
 import AppointmentForm from './components/AppointmentForm';
 import MobileDayView from './components/MobileDayView';
+import AppointmentFilter from './components/AppointmentFilter';
+import DarkModeToggle from './components/DarkModeToggle';
 import { 
   loadAppointmentsFromStorage, 
   saveAppointmentsToStorage,
@@ -29,6 +31,14 @@ function App() {
   const [showForm, setShowForm] = useState(false);
   const [viewMode, setViewMode] = useState('calendar'); // 'calendar' or 'mobile'
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    return localStorage.getItem('clinic_dark_mode') === 'true';
+  });
+  const [filters, setFilters] = useState({
+    doctorId: '',
+    patientId: '',
+    type: ''
+  });
 
   // Load appointments from localStorage on component mount
   useEffect(() => {
@@ -47,6 +57,11 @@ function App() {
   useEffect(() => {
     saveAppointmentsToStorage(appointments);
   }, [appointments]);
+
+  // Persist dark mode preference to localStorage
+  useEffect(() => {
+    localStorage.setItem('clinic_dark_mode', isDarkMode.toString());
+  }, [isDarkMode]);
 
   const handleLogin = ({ email, password }) => {
     if (email === STAFF_EMAIL && password === STAFF_PASSWORD) {
@@ -112,21 +127,36 @@ function App() {
     setSelectedAppointment(null);
   };
 
-  const handleDeleteAppointment = (appointmentId) => {
-    if (window.confirm('Are you sure you want to delete this appointment?')) {
-      // Delete appointment using React state
-      setAppointments(prevAppointments => 
-        deleteAppointmentFromState(prevAppointments, appointmentId)
-      );
-      setShowForm(false);
-      setSelectedAppointment(null);
-    }
-  };
+
 
   const handleCancelForm = () => {
     setShowForm(false);
     setSelectedAppointment(null);
   };
+
+  const handleDeleteAppointment = (appointmentId) => {
+    if (window.confirm('Are you sure you want to delete this appointment?')) {
+      setAppointments(prevAppointments => 
+        deleteAppointmentFromState(prevAppointments, appointmentId)
+      );
+    }
+  };
+
+  const handleFilterChange = (newFilters) => {
+    setFilters(newFilters);
+  };
+
+  const handleDarkModeToggle = () => {
+    setIsDarkMode(!isDarkMode);
+  };
+
+  // Filter appointments based on current filters
+  const filteredAppointments = appointments.filter(appointment => {
+    if (filters.doctorId && appointment.doctorId !== filters.doctorId) return false;
+    if (filters.patientId && appointment.patientId !== filters.patientId) return false;
+    if (filters.type && appointment.type !== filters.type) return false;
+    return true;
+  });
 
   if (!loggedIn) {
     return (
@@ -137,10 +167,11 @@ function App() {
   }
 
   return (
-    <div className="App">
+    <div className={`App ${isDarkMode ? 'dark-mode' : ''}`}>
       <header className="app-header">
         <h1>Clinic Calendar</h1>
         <div className="user-info">
+          <DarkModeToggle isDarkMode={isDarkMode} onToggle={handleDarkModeToggle} />
           <span>Welcome, Staff</span>
           <button onClick={handleLogout} className="logout-btn">Logout</button>
         </div>
@@ -188,18 +219,22 @@ function App() {
               </button>
             </div>
 
+            <AppointmentFilter onFilterChange={handleFilterChange} />
+
             {viewMode === 'calendar' ? (
               <CalendarView
-                appointments={appointments}
+                appointments={filteredAppointments}
                 onDateSelect={handleDateSelect}
                 onAppointmentClick={handleAppointmentClick}
+                onDeleteAppointment={handleDeleteAppointment}
               />
             ) : (
               <MobileDayView
                 date={selectedDate}
-                appointments={appointments}
+                appointments={filteredAppointments}
                 onAppointmentClick={handleAppointmentClick}
                 onAddAppointment={handleAddAppointment}
+                onDeleteAppointment={handleDeleteAppointment}
               />
             )}
           </div>

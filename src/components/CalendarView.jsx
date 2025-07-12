@@ -5,7 +5,7 @@ const loadEntities = async () => {
   return data;
 };
 
-const CalendarView = ({ appointments, onDateSelect, onAppointmentClick }) => {
+const CalendarView = ({ appointments, onDateSelect, onAppointmentClick, onDeleteAppointment }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [calendarDays, setCalendarDays] = useState([]);
   const [entities, setEntities] = useState({ patients: [], doctors: [] });
@@ -89,6 +89,13 @@ const CalendarView = ({ appointments, onDateSelect, onAppointmentClick }) => {
     onAppointmentClick(appointment);
   };
 
+  const handleDeleteAppointment = (appointment, e) => {
+    e.stopPropagation();
+    if (window.confirm(`Are you sure you want to delete the appointment for ${getPatientName(appointment.patientId)}?`)) {
+      onDeleteAppointment(appointment.id);
+    }
+  };
+
   return (
     <div className="calendar-view">
       <div className="calendar-header">
@@ -126,12 +133,23 @@ const CalendarView = ({ appointments, onDateSelect, onAppointmentClick }) => {
                       <div
                         key={idx}
                         className="appointment-indicator"
-                        onClick={(e) => handleAppointmentClick(appointment, e)}
                         title={`${appointment.time} - ${getPatientName(appointment.patientId)} with ${getDoctorName(appointment.doctorId)}`}
                       >
-                        <span style={{fontWeight: 600}}>{appointment.time}</span>{' '}
-                        <span style={{color: '#333', fontSize: '0.85em'}}>{getPatientName(appointment.patientId)}</span>
-                        <span style={{color: '#888', fontSize: '0.8em'}}> ({getDoctorName(appointment.doctorId)})</span>
+                        <div 
+                          className="appointment-content"
+                          onClick={(e) => handleAppointmentClick(appointment, e)}
+                        >
+                          <span style={{fontWeight: 600}}>{appointment.time}</span>{' '}
+                          <span style={{color: '#333', fontSize: '0.85em'}}>{getPatientName(appointment.patientId)}</span>
+                          <span style={{color: '#888', fontSize: '0.8em'}}> ({getDoctorName(appointment.doctorId)})</span>
+                        </div>
+                        <button
+                          className="delete-appointment-btn"
+                          onClick={(e) => handleDeleteAppointment(appointment, e)}
+                          title="Delete appointment"
+                        >
+                          ×
+                        </button>
                       </div>
                     ))}
                     {dayAppointments.length > 3 && (

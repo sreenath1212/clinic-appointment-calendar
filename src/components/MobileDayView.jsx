@@ -5,7 +5,7 @@ const loadEntities = async () => {
   return data;
 };
 
-const MobileDayView = ({ date, appointments, onAppointmentClick, onAddAppointment }) => {
+const MobileDayView = ({ date, appointments, onAppointmentClick, onAddAppointment, onDeleteAppointment }) => {
   const [selectedDate, setSelectedDate] = useState(date);
   const [entities, setEntities] = useState({ patients: [], doctors: [] });
 
@@ -149,6 +149,17 @@ const MobileDayView = ({ date, appointments, onAppointmentClick, onAddAppointmen
               
               <div className="appointment-actions">
                 <button className="action-btn">Edit</button>
+                <button 
+                  className="action-btn delete-action-btn"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (window.confirm(`Are you sure you want to delete the appointment for ${getPatientName(appointment.patientId)}?`)) {
+                      onDeleteAppointment(appointment.id);
+                    }
+                  }}
+                >
+                  Delete
+                </button>
               </div>
             </div>
           ))
