@@ -1107,9 +1107,36 @@ body {
     font-size: 0.95rem;
   }
   
+  /* Mobile toolbar styling - emphasize day view as primary */
   .toolbar {
     flex-wrap: wrap;
     gap: 0.5rem;
+    padding: 1rem;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-bottom: 2px solid #e1e8ed;
+  }
+  
+  .toolbar button {
+    font-size: 0.9rem;
+    padding: 0.75rem 1rem;
+    border-radius: 10px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+  }
+  
+  /* Make day view button more prominent on mobile */
+  .toolbar button:nth-child(2) {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-color: transparent;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    transform: scale(1.05);
+  }
+  
+  .toolbar button:nth-child(2):hover {
+    background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+    transform: scale(1.05) translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
   }
   
   .appointment-filter {
@@ -1582,6 +1609,23 @@ body {
   display: flex;
   flex-direction: column;
   background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  position: relative;
+}
+
+/* Add a subtle indicator that this is the primary mobile view */
+.mobile-day-view::before {
+  content: '📱 Mobile View';
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background: rgba(102, 126, 234, 0.1);
+  color: #667eea;
+  padding: 0.25rem 0.5rem;
+  border-radius: 8px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  z-index: 10;
+  opacity: 0.8;
 }
 
 /* Mobile Date Navigation */
