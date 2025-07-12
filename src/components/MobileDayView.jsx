@@ -170,11 +170,27 @@ const MobileDayView = ({ date, appointments, onAppointmentClick, onAddAppointmen
         {visibleDays.map((dayDate, index) => {
           const dayAppointments = getAppointmentsForDate(dayDate);
           const isCurrentDay = dayDate.toDateString() === selectedDate.toDateString();
-          
+          const isPast = isPastDate(dayDate);
           return (
             <div 
               key={index}
-              className={`day-section ${isCurrentDay ? 'current-day' : ''} ${isToday(dayDate) ? 'today' : ''} ${isPastDate(dayDate) ? 'past-date' : ''}`}
+              className={`day-section ${isCurrentDay ? 'current-day' : ''} ${isToday(dayDate) ? 'today' : ''} ${isPast ? 'past-date' : ''}`}
+              onClick={
+                !isPast
+                  ? (e) => {
+                      // Prevent click if user clicks on an appointment card or button
+                      if (
+                        e.target.closest('.appointment-card') ||
+                        e.target.closest('.add-appointment-btn') ||
+                        e.target.closest('.action-btn')
+                      ) {
+                        return;
+                      }
+                      onAddAppointment(dayDate);
+                    }
+                  : undefined
+              }
+              style={{ cursor: !isPast ? 'pointer' : 'default' }}
             >
               <div className="day-header">
                 <h3 className="day-title">
@@ -183,8 +199,11 @@ const MobileDayView = ({ date, appointments, onAppointmentClick, onAddAppointmen
                 </h3>
                 <button 
                   className="add-appointment-btn"
-                  onClick={() => onAddAppointment(dayDate)}
-                  disabled={isPastDate(dayDate)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onAddAppointment(dayDate);
+                  }}
+                  disabled={isPast}
                 >
                   + Add
                 </button>
@@ -194,7 +213,7 @@ const MobileDayView = ({ date, appointments, onAppointmentClick, onAddAppointmen
                 {dayAppointments.length === 0 ? (
                   <div className="no-appointments">
                     <p>No appointments scheduled</p>
-                    {!isPastDate(dayDate) && (
+                    {!isPast && (
                       <button 
                         className="btn-primary"
                         onClick={() => onAddAppointment(dayDate)}
