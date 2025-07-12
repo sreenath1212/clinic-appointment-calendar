@@ -222,6 +222,7 @@ body {
   gap: 1px;
   background-color: #ddd;
   border: 1px solid #ddd;
+  min-height: 600px;
 }
 
 .calendar-weekdays {
@@ -256,7 +257,13 @@ body {
 
 .calendar-day.other-month {
   background-color: #f8f9fa;
-  color: #6c757d;
+  color: #adb5bd;
+  cursor: default;
+  pointer-events: none;
+}
+
+.calendar-day.other-month:hover {
+  background-color: #f8f9fa;
 }
 
 .calendar-day.today {

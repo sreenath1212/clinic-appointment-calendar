@@ -22,15 +22,37 @@ const CalendarView = ({ appointments, onDateSelect, onAppointmentClick }) => {
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth();
     const firstDay = new Date(year, month, 1);
-    const startDate = new Date(firstDay);
-    startDate.setDate(startDate.getDate() - firstDay.getDay());
-
+    const lastDay = new Date(year, month + 1, 0);
+    
+    // Calculate how many days from previous month to show
+    const firstDayOfWeek = firstDay.getDay(); // 0 = Sunday, 1 = Monday, etc.
+    
+    // Calculate how many days from next month to show
+    const lastDayOfWeek = lastDay.getDay();
+    const daysFromNextMonth = 6 - lastDayOfWeek;
+    
     const days = [];
-    for (let i = 0; i < 42; i++) {
-      const date = new Date(startDate);
-      date.setDate(startDate.getDate() + i);
-      days.push(date);
+    
+    // Add days from previous month (greyed out)
+    for (let i = 0; i < firstDayOfWeek; i++) {
+      const date = new Date(firstDay);
+      date.setDate(firstDay.getDate() - (firstDayOfWeek - i));
+      days.push({ date, isCurrentMonth: false, isEmpty: false });
     }
+    
+    // Add all days of current month
+    for (let i = 1; i <= lastDay.getDate(); i++) {
+      const date = new Date(year, month, i);
+      days.push({ date, isCurrentMonth: true, isEmpty: false });
+    }
+    
+    // Add days from next month (greyed out)
+    for (let i = 1; i <= daysFromNextMonth; i++) {
+      const date = new Date(lastDay);
+      date.setDate(lastDay.getDate() + i);
+      days.push({ date, isCurrentMonth: false, isEmpty: false });
+    }
+    
     setCalendarDays(days);
   };
 
@@ -87,34 +109,38 @@ const CalendarView = ({ appointments, onDateSelect, onAppointmentClick }) => {
         </div>
         
         <div className="calendar-days">
-          {calendarDays.map((date, index) => {
-            const dayAppointments = getAppointmentsForDate(date);
+          {calendarDays.map((dayData, index) => {
+            const { date, isCurrentMonth } = dayData;
+            const dayAppointments = isCurrentMonth ? getAppointmentsForDate(date) : [];
             return (
               <div
                 key={index}
-                className={`calendar-day ${!isCurrentMonth(date) ? 'other-month' : ''} ${isToday(date) ? 'today' : ''}`}
-                onClick={() => handleDateClick(date)}
+                className={`calendar-day ${!isCurrentMonth ? 'other-month' : ''} ${isToday(date) ? 'today' : ''}`}
+                onClick={isCurrentMonth ? () => handleDateClick(date) : undefined}
+                style={{ cursor: isCurrentMonth ? 'pointer' : 'default' }}
               >
                 <span className="day-number">{date.getDate()}</span>
-                <div className="appointments">
-                  {dayAppointments.slice(0, 3).map((appointment, idx) => (
-                    <div
-                      key={idx}
-                      className="appointment-indicator"
-                      onClick={(e) => handleAppointmentClick(appointment, e)}
-                      title={`${appointment.time} - ${getPatientName(appointment.patientId)} with ${getDoctorName(appointment.doctorId)}`}
-                    >
-                      <span style={{fontWeight: 600}}>{appointment.time}</span>{' '}
-                      <span style={{color: '#333', fontSize: '0.85em'}}>{getPatientName(appointment.patientId)}</span>
-                      <span style={{color: '#888', fontSize: '0.8em'}}> ({getDoctorName(appointment.doctorId)})</span>
-                    </div>
-                  ))}
-                  {dayAppointments.length > 3 && (
-                    <div className="more-appointments">
-                      +{dayAppointments.length - 3} more
-                    </div>
-                  )}
-                </div>
+                {isCurrentMonth && (
+                  <div className="appointments">
+                    {dayAppointments.slice(0, 3).map((appointment, idx) => (
+                      <div
+                        key={idx}
+                        className="appointment-indicator"
+                        onClick={(e) => handleAppointmentClick(appointment, e)}
+                        title={`${appointment.time} - ${getPatientName(appointment.patientId)} with ${getDoctorName(appointment.doctorId)}`}
+                      >
+                        <span style={{fontWeight: 600}}>{appointment.time}</span>{' '}
+                        <span style={{color: '#333', fontSize: '0.85em'}}>{getPatientName(appointment.patientId)}</span>
+                        <span style={{color: '#888', fontSize: '0.8em'}}> ({getDoctorName(appointment.doctorId)})</span>
+                      </div>
+                    ))}
+                    {dayAppointments.length > 3 && (
+                      <div className="more-appointments">
+                        +{dayAppointments.length - 3} more
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             );
           })}
