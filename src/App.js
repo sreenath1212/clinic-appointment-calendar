@@ -247,7 +247,9 @@ function App() {
               </button>
             </div>
 
-            <AppointmentFilter onFilterChange={handleFilterChange} />
+            {viewMode === 'calendar' && (
+              <AppointmentFilter onFilterChange={handleFilterChange} />
+            )}
 
             {viewMode === 'calendar' ? (
               <CalendarView
@@ -259,7 +261,7 @@ function App() {
             ) : (
               <MobileDayView
                 date={selectedDate}
-                appointments={filteredAppointments}
+                appointments={appointments}
                 onAppointmentClick={handleAppointmentClick}
                 onAddAppointment={handleAddAppointment}
                 onDeleteAppointment={handleDeleteAppointment}
