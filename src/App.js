@@ -14,7 +14,8 @@ import {
   deleteAppointmentFromState,
   validateAppointment,
   checkForConflicts,
-  clearAppointmentsFromStorage
+  clearAppointmentsFromStorage,
+  testConflictDetection
 } from './utils/appointmentStateManager';
 
 const STAFF_EMAIL = 'staff@clinic.com';
@@ -133,7 +134,37 @@ function App() {
     // Check for conflicts
     const hasConflicts = checkForConflicts(appointments, appointmentData, selectedAppointment?.id);
     if (hasConflicts) {
-      alert('This appointment conflicts with an existing appointment. Please choose a different time.');
+      // Find the conflicting appointment to provide better error message
+      const conflictingAppointment = appointments.find(existing => {
+        if (selectedAppointment?.id && existing.id === selectedAppointment.id) return false;
+        
+        const appointmentDate = new Date(appointmentData.date);
+        const appointmentEnd = new Date(appointmentDate.getTime() + (appointmentData.duration || 30) * 60000);
+        const existingDate = new Date(existing.date);
+        const existingEnd = new Date(existingDate.getTime() + (existing.duration || 30) * 60000);
+        
+        const sameDate = appointmentDate.toDateString() === existingDate.toDateString();
+        const timeOverlap = appointmentDate < existingEnd && appointmentEnd > existingDate;
+        const sameDoctor = existing.doctorId === appointmentData.doctorId;
+        const samePatient = existing.patientId === appointmentData.patientId;
+        
+        return sameDate && timeOverlap && (sameDoctor || samePatient);
+      });
+
+      let conflictMessage = 'This appointment conflicts with an existing appointment. ';
+      if (conflictingAppointment) {
+        if (conflictingAppointment.doctorId === appointmentData.doctorId) {
+          conflictMessage += 'The doctor already has an appointment at this time.';
+        } else if (conflictingAppointment.patientId === appointmentData.patientId) {
+          conflictMessage += 'The patient already has an appointment at this time.';
+        } else {
+          conflictMessage += 'Please choose a different time.';
+        }
+      } else {
+        conflictMessage += 'Please choose a different time.';
+      }
+      
+      alert(conflictMessage);
       return;
     }
 
@@ -192,6 +223,13 @@ function App() {
     }
   };
 
+  // Debug function to test conflict detection
+  const handleDebugConflictTest = () => {
+    console.log('Running conflict detection tests...');
+    testConflictDetection();
+    alert('Conflict detection tests completed. Check console for results.');
+  };
+
   // Filter appointments based on current filters
   const filteredAppointments = appointments.filter(appointment => {
     if (filters.doctorId && appointment.doctorId !== filters.doctorId) return false;
@@ -217,6 +255,9 @@ function App() {
           <span>Welcome, Staff</span>
           <button onClick={handleDebugClear} className="logout-btn" style={{ marginRight: '10px' }}>
             Debug Reset
+          </button>
+          <button onClick={handleDebugConflictTest} className="logout-btn" style={{ marginRight: '10px' }}>
+            Debug Conflict Test
           </button>
           <button onClick={handleLogout} className="logout-btn">Logout</button>
         </div>

@@ -18,8 +18,8 @@ const sampleAppointments = [
     id: '2',
     patientId: 'p2',
     doctorId: 'd2',
-    date: '2024-01-15T10:30:00.000Z',
-    time: '10:30',
+    date: '2024-01-15T09:00:00.000Z', // Same time as appointment 1, but different doctor/patient
+    time: '09:00',
     duration: 45,
     type: 'follow-up',
     notes: 'Follow-up on blood pressure medication'
@@ -27,12 +27,22 @@ const sampleAppointments = [
   {
     id: '3',
     patientId: 'p3',
-    doctorId: 'd3',
-    date: '2024-01-16T14:00:00.000Z',
-    time: '14:00',
+    doctorId: 'd1', // Same doctor as appointment 1, different time
+    date: '2024-01-15T10:30:00.000Z',
+    time: '10:30',
     duration: 60,
     type: 'procedure',
     notes: 'Minor surgical procedure - patient fasting required'
+  },
+  {
+    id: '4',
+    patientId: 'p1', // Same patient as appointment 1, different time
+    doctorId: 'd3',
+    date: '2024-01-15T14:00:00.000Z',
+    time: '14:00',
+    duration: 30,
+    type: 'routine',
+    notes: 'Routine check-up'
   }
 ];
 
@@ -156,14 +166,86 @@ export const checkForConflicts = (appointments, newAppointment, excludeId = null
   const appointmentEnd = new Date(appointmentDate.getTime() + (newAppointment.duration || 30) * 60000);
   
   return appointments.some(existing => {
+    // Skip the appointment being edited
     if (excludeId && existing.id === excludeId) return false;
     
     const existingDate = new Date(existing.date);
     const existingEnd = new Date(existingDate.getTime() + (existing.duration || 30) * 60000);
     
-    return appointmentDate.toDateString() === existingDate.toDateString() &&
-           appointmentDate < existingEnd && appointmentEnd > existingDate;
+    // Check if appointments are on the same date and have time overlap
+    const sameDate = appointmentDate.toDateString() === existingDate.toDateString();
+    const timeOverlap = appointmentDate < existingEnd && appointmentEnd > existingDate;
+    
+    // Only consider it a conflict if:
+    // 1. Same date and time overlap AND
+    // 2. Same doctor OR same patient
+    const sameDoctor = existing.doctorId === newAppointment.doctorId;
+    const samePatient = existing.patientId === newAppointment.patientId;
+    
+    return sameDate && timeOverlap && (sameDoctor || samePatient);
   });
+};
+
+// Test function to verify conflict detection
+export const testConflictDetection = () => {
+  const testAppointments = [
+    {
+      id: '1',
+      patientId: 'p1',
+      doctorId: 'd1',
+      date: '2024-01-15T09:00:00.000Z',
+      time: '09:00',
+      duration: 30
+    },
+    {
+      id: '2',
+      patientId: 'p2',
+      doctorId: 'd2',
+      date: '2024-01-15T09:00:00.000Z',
+      time: '09:00',
+      duration: 30
+    }
+  ];
+
+  // Test 1: Same doctor, same time - should conflict
+  const test1 = {
+    patientId: 'p3',
+    doctorId: 'd1', // Same doctor as appointment 1
+    date: '2024-01-15T09:00:00.000Z',
+    time: '09:00',
+    duration: 30
+  };
+  console.log('Test 1 - Same doctor conflict:', checkForConflicts(testAppointments, test1));
+
+  // Test 2: Same patient, same time - should conflict
+  const test2 = {
+    patientId: 'p1', // Same patient as appointment 1
+    doctorId: 'd3',
+    date: '2024-01-15T09:00:00.000Z',
+    time: '09:00',
+    duration: 30
+  };
+  console.log('Test 2 - Same patient conflict:', checkForConflicts(testAppointments, test2));
+
+  // Test 3: Different doctor and patient, same time - should NOT conflict
+  const test3 = {
+    patientId: 'p3',
+    doctorId: 'd3',
+    date: '2024-01-15T09:00:00.000Z',
+    time: '09:00',
+    duration: 30
+  };
+  console.log('Test 3 - No conflict (different doctor/patient):', checkForConflicts(testAppointments, test3));
+
+  // Test 4: Same doctor, different time - should NOT conflict
+  const test4 = {
+    patientId: 'p3',
+    doctorId: 'd1', // Same doctor as appointment 1
+    date: '2024-01-15T10:00:00.000Z', // Different time
+    time: '10:00',
+    duration: 30
+  };
+  console.log('Test 4 - No conflict (different time):', checkForConflicts(testAppointments, test4));
 };
 
 // Export constants
