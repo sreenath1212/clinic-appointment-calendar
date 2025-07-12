@@ -1,0 +1,15 @@
+{
+  "patients": [
+    { "id": "p1", "name": "John Smith" },
+    { "id": "p2", "name": "Sarah Johnson" },
+    { "id": "p3", "name": "Michael Brown" },
+    { "id": "p4", "name": "Emily Davis" },
+    { "id": "p5", "name": "Robert Wilson" },
+    { "id": "p6", "name": "Lisa Anderson" }
+  ],
+  "doctors": [
+    { "id": "d1", "name": "Dr. Alice Carter" },
+    { "id": "d2", "name": "Dr. Brian Lee" },
+    { "id": "d3", "name": "Dr. Priya Patel" }
+  ]
+} 

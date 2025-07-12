@@ -81,20 +81,163 @@ body {
 
 /* Login styles */
 .login-container {
-  max-width: 400px;
-  margin: 4rem auto;
-  padding: 2rem;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  max-width: 450px;
+  margin: 2rem auto;
+  padding: 3rem 2.5rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 20px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.login-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+}
+
+.login-container > * {
+  position: relative;
+  z-index: 1;
 }
 
 .login-container h2 {
   text-align: center;
-  margin-bottom: 2rem;
-  color: #2c3e50;
+  margin-bottom: 2.5rem;
+  color: white;
+  font-size: 2.2rem;
+  font-weight: 700;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  letter-spacing: 1px;
 }
 
+.login-container form {
+  background: rgba(255, 255, 255, 0.95);
+  padding: 2rem;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.login-container .form-group {
+  margin-bottom: 1.5rem;
+}
+
+.login-container .form-group label {
+  display: block;
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+  color: #2c3e50;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.login-container .form-group input {
+  width: 100%;
+  padding: 1rem 1.2rem;
+  border: 2px solid #e1e8ed;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-family: inherit;
+  background: white;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.login-container .form-group input:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  transform: translateY(-2px);
+}
+
+.login-container .form-group input::placeholder {
+  color: #aab7c4;
+}
+
+.login-container button {
+  width: 100%;
+  padding: 1rem 1.5rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 1.5rem;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+}
+
+.login-container button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 35px rgba(102, 126, 234, 0.4);
+  background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+}
+
+.login-container button:active {
+  transform: translateY(-1px);
+}
+
+/* Login page background */
+.App:has(.login-container) {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+/* Dark mode login styles */
+.App.dark-mode .login-container {
+  background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+}
+
+.App.dark-mode .login-container h2 {
+  color: white;
+}
+
+.App.dark-mode .login-container form {
+  background: rgba(45, 45, 45, 0.95);
+}
+
+.App.dark-mode .login-container .form-group label {
+  color: #ecf0f1;
+}
+
+.App.dark-mode .login-container .form-group input {
+  background: #2d2d2d;
+  border-color: #555;
+  color: white;
+}
+
+.App.dark-mode .login-container .form-group input:focus {
+  border-color: #3498db;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+.App.dark-mode .login-container button {
+  background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+  box-shadow: 0 8px 25px rgba(52, 152, 219, 0.3);
+}
+
+.App.dark-mode .login-container button:hover {
+  box-shadow: 0 12px 35px rgba(52, 152, 219, 0.4);
+  background: linear-gradient(135deg, #2980b9 0%, #1f5f8b 100%);
+}
+
+/* General form styles (for other forms) */
 .form-group {
   margin-bottom: 1rem;
 }
@@ -133,22 +276,6 @@ body {
 .form-group textarea {
   resize: vertical;
   min-height: 80px;
-}
-
-.login-container button {
-  width: 100%;
-  padding: 0.75rem;
-  background-color: #3498db;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  font-size: 1rem;
-  cursor: pointer;
-  margin-top: 1rem;
-}
-
-.login-container button:hover {
-  background-color: #2980b9;
 }
 
 /* Calendar container */
