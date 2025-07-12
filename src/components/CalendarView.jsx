@@ -12,7 +12,6 @@ const CalendarView = ({ appointments, onDateSelect, onAppointmentClick }) => {
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth();
     const firstDay = new Date(year, month, 1);
-    const lastDay = new Date(year, month + 1, 0);
     const startDate = new Date(firstDay);
     startDate.setDate(startDate.getDate() - firstDay.getDay());
 
@@ -29,13 +28,6 @@ const CalendarView = ({ appointments, onDateSelect, onAppointmentClick }) => {
     return appointments.filter(appointment => {
       const appointmentDate = new Date(appointment.date);
       return appointmentDate.toDateString() === date.toDateString();
-    });
-  };
-
-  const formatDate = (date) => {
-    return date.toLocaleDateString('en-US', { 
-      month: 'short', 
-      day: 'numeric' 
     });
   };
 
@@ -93,7 +85,8 @@ const CalendarView = ({ appointments, onDateSelect, onAppointmentClick }) => {
                       onClick={(e) => handleAppointmentClick(appointment, e)}
                       title={`${appointment.time} - ${appointment.patientName}`}
                     >
-                      {appointment.time}
+                      <span style={{fontWeight: 600}}>{appointment.time}</span>{' '}
+                      <span style={{color: '#333', fontSize: '0.85em'}}>{appointment.patientName}</span>
                     </div>
                   ))}
                   {dayAppointments.length > 3 && (

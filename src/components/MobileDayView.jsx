@@ -1,6 +1,23 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 const MobileDayView = ({ date, appointments, onAppointmentClick, onAddAppointment }) => {
+  const [selectedDate, setSelectedDate] = useState(date);
+
+  React.useEffect(() => {
+    setSelectedDate(date);
+  }, [date]);
+
+  const handleDateChange = (e) => {
+    const newDate = new Date(e.target.value);
+    setSelectedDate(newDate);
+    // Notify parent to update the view
+    if (typeof onAddAppointment === 'function') {
+      // Use onAddAppointment as a date change handler for now
+      // (parent should update selectedDate in App.js)
+      onAddAppointment(newDate);
+    }
+  };
+
   const formatTime = (timeString) => {
     const date = new Date(timeString);
     return date.toLocaleTimeString('en-US', { 
@@ -27,7 +44,7 @@ const MobileDayView = ({ date, appointments, onAppointmentClick, onAddAppointmen
     }).sort((a, b) => new Date(a.date) - new Date(b.date));
   };
 
-  const dayAppointments = getAppointmentsForDate(date);
+  const dayAppointments = getAppointmentsForDate(selectedDate);
 
   const getTypeColor = (type) => {
     const colors = {
@@ -41,12 +58,18 @@ const MobileDayView = ({ date, appointments, onAppointmentClick, onAddAppointmen
   };
 
   return (
-    <div className="mobile-day-view">
+    <div className="mobile-day-view" style={{ maxHeight: '80vh', overflowY: 'auto' }}>
       <div className="day-header">
-        <h2>{formatDate(date)}</h2>
+        <input
+          type="date"
+          value={selectedDate.toISOString().split('T')[0]}
+          onChange={handleDateChange}
+          style={{ marginRight: '1rem', padding: '0.5rem', borderRadius: 4, border: '1px solid #ccc' }}
+        />
+        <h2 style={{ flex: 1 }}>{formatDate(selectedDate)}</h2>
         <button 
           className="add-appointment-btn"
-          onClick={() => onAddAppointment(date)}
+          onClick={() => onAddAppointment(selectedDate)}
         >
           + Add Appointment
         </button>
@@ -58,7 +81,7 @@ const MobileDayView = ({ date, appointments, onAppointmentClick, onAddAppointmen
             <p>No appointments scheduled for this day</p>
             <button 
               className="btn-primary"
-              onClick={() => onAddAppointment(date)}
+              onClick={() => onAddAppointment(selectedDate)}
             >
               Schedule First Appointment
             </button>
