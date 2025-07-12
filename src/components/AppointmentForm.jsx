@@ -1,8 +1,14 @@
 import React, { useState, useEffect } from 'react';
 
+const loadEntities = async () => {
+  const data = await fetch(process.env.PUBLIC_URL + '/data/clinicEntities.json').then(res => res.json());
+  return data;
+};
+
 const AppointmentForm = ({ appointment, onSave, onCancel }) => {
   const [formData, setFormData] = useState({
-    patientName: '',
+    patientId: '',
+    doctorId: '',
     date: '',
     time: '',
     duration: 30,
@@ -11,6 +17,11 @@ const AppointmentForm = ({ appointment, onSave, onCancel }) => {
     phone: '',
     email: ''
   });
+  const [entities, setEntities] = useState({ patients: [], doctors: [] });
+
+  useEffect(() => {
+    loadEntities().then(setEntities);
+  }, []);
 
   useEffect(() => {
     if (appointment) {
@@ -36,20 +47,17 @@ const AppointmentForm = ({ appointment, onSave, onCancel }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
     // Validate required fields
-    if (!formData.patientName || !formData.date || !formData.time) {
+    if (!formData.patientId || !formData.doctorId || !formData.date || !formData.time) {
       alert('Please fill in all required fields');
       return;
     }
-
     // Create appointment object
     const appointmentData = {
       ...formData,
       id: appointment ? appointment.id : Date.now().toString(),
       date: new Date(formData.date + 'T' + formData.time).toISOString()
     };
-
     onSave(appointmentData);
   };
 
@@ -66,62 +74,39 @@ const AppointmentForm = ({ appointment, onSave, onCancel }) => {
   return (
     <div className="appointment-form">
       <h3>{appointment ? 'Edit Appointment' : 'New Appointment'}</h3>
-      
       <form onSubmit={handleSubmit}>
         <div className="form-row">
           <div className="form-group">
-            <label htmlFor="patientName">Patient Name *</label>
-            <input
-              type="text"
-              id="patientName"
-              name="patientName"
-              value={formData.patientName}
+            <label htmlFor="patientId">Patient *</label>
+            <select
+              id="patientId"
+              name="patientId"
+              value={formData.patientId}
               onChange={handleChange}
               required
-            />
-          </div>
-          
-          <div className="form-group">
-            <label htmlFor="phone">Phone</label>
-            <input
-              type="tel"
-              id="phone"
-              name="phone"
-              value={formData.phone}
-              onChange={handleChange}
-            />
-          </div>
-        </div>
-
-        <div className="form-row">
-          <div className="form-group">
-            <label htmlFor="email">Email</label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-            />
-          </div>
-          
-          <div className="form-group">
-            <label htmlFor="type">Appointment Type</label>
-            <select
-              id="type"
-              name="type"
-              value={formData.type}
-              onChange={handleChange}
             >
-              {appointmentTypes.map(type => (
-                <option key={type.value} value={type.value}>
-                  {type.label}
-                </option>
+              <option value="">Select patient</option>
+              {entities.patients.map(patient => (
+                <option key={patient.id} value={patient.id}>{patient.name}</option>
+              ))}
+            </select>
+          </div>
+          <div className="form-group">
+            <label htmlFor="doctorId">Doctor *</label>
+            <select
+              id="doctorId"
+              name="doctorId"
+              value={formData.doctorId}
+              onChange={handleChange}
+              required
+            >
+              <option value="">Select doctor</option>
+              {entities.doctors.map(doctor => (
+                <option key={doctor.id} value={doctor.id}>{doctor.name}</option>
               ))}
             </select>
           </div>
         </div>
-
         <div className="form-row">
           <div className="form-group">
             <label htmlFor="date">Date *</label>
@@ -134,7 +119,6 @@ const AppointmentForm = ({ appointment, onSave, onCancel }) => {
               required
             />
           </div>
-          
           <div className="form-group">
             <label htmlFor="time">Time *</label>
             <input
@@ -146,7 +130,6 @@ const AppointmentForm = ({ appointment, onSave, onCancel }) => {
               required
             />
           </div>
-          
           <div className="form-group">
             <label htmlFor="duration">Duration (minutes)</label>
             <select
@@ -163,19 +146,34 @@ const AppointmentForm = ({ appointment, onSave, onCancel }) => {
             </select>
           </div>
         </div>
-
-        <div className="form-group">
-          <label htmlFor="notes">Notes</label>
-          <textarea
-            id="notes"
-            name="notes"
-            value={formData.notes}
-            onChange={handleChange}
-            rows="3"
-            placeholder="Additional notes about the appointment..."
-          />
+        <div className="form-row">
+          <div className="form-group">
+            <label htmlFor="type">Appointment Type</label>
+            <select
+              id="type"
+              name="type"
+              value={formData.type}
+              onChange={handleChange}
+            >
+              {appointmentTypes.map(type => (
+                <option key={type.value} value={type.value}>
+                  {type.label}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="form-group">
+            <label htmlFor="notes">Notes</label>
+            <textarea
+              id="notes"
+              name="notes"
+              value={formData.notes}
+              onChange={handleChange}
+              rows="3"
+              placeholder="Additional notes about the appointment..."
+            />
+          </div>
         </div>
-
         <div className="form-actions">
           <button type="submit" className="btn-primary">
             {appointment ? 'Update Appointment' : 'Create Appointment'}

@@ -1,12 +1,22 @@
 import React, { useState, useEffect } from 'react';
 
+const loadEntities = async () => {
+  const data = await fetch(process.env.PUBLIC_URL + '/data/clinicEntities.json').then(res => res.json());
+  return data;
+};
+
 const CalendarView = ({ appointments, onDateSelect, onAppointmentClick }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [calendarDays, setCalendarDays] = useState([]);
+  const [entities, setEntities] = useState({ patients: [], doctors: [] });
 
   useEffect(() => {
     generateCalendarDays();
   }, [currentDate]);
+
+  useEffect(() => {
+    loadEntities().then(setEntities);
+  }, []);
 
   const generateCalendarDays = () => {
     const year = currentDate.getFullYear();
@@ -29,6 +39,15 @@ const CalendarView = ({ appointments, onDateSelect, onAppointmentClick }) => {
       const appointmentDate = new Date(appointment.date);
       return appointmentDate.toDateString() === date.toDateString();
     });
+  };
+
+  const getPatientName = (id) => {
+    const p = entities.patients.find(p => p.id === id);
+    return p ? p.name : '';
+  };
+  const getDoctorName = (id) => {
+    const d = entities.doctors.find(d => d.id === id);
+    return d ? d.name : '';
   };
 
   const isCurrentMonth = (date) => {
@@ -83,10 +102,11 @@ const CalendarView = ({ appointments, onDateSelect, onAppointmentClick }) => {
                       key={idx}
                       className="appointment-indicator"
                       onClick={(e) => handleAppointmentClick(appointment, e)}
-                      title={`${appointment.time} - ${appointment.patientName}`}
+                      title={`${appointment.time} - ${getPatientName(appointment.patientId)} with ${getDoctorName(appointment.doctorId)}`}
                     >
                       <span style={{fontWeight: 600}}>{appointment.time}</span>{' '}
-                      <span style={{color: '#333', fontSize: '0.85em'}}>{appointment.patientName}</span>
+                      <span style={{color: '#333', fontSize: '0.85em'}}>{getPatientName(appointment.patientId)}</span>
+                      <span style={{color: '#888', fontSize: '0.8em'}}> ({getDoctorName(appointment.doctorId)})</span>
                     </div>
                   ))}
                   {dayAppointments.length > 3 && (

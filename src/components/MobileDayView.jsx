@@ -1,19 +1,26 @@
 import React, { useState } from 'react';
 
+const loadEntities = async () => {
+  const data = await fetch(process.env.PUBLIC_URL + '/data/clinicEntities.json').then(res => res.json());
+  return data;
+};
+
 const MobileDayView = ({ date, appointments, onAppointmentClick, onAddAppointment }) => {
   const [selectedDate, setSelectedDate] = useState(date);
+  const [entities, setEntities] = useState({ patients: [], doctors: [] });
 
   React.useEffect(() => {
     setSelectedDate(date);
   }, [date]);
 
+  React.useEffect(() => {
+    loadEntities().then(setEntities);
+  }, []);
+
   const handleDateChange = (e) => {
     const newDate = new Date(e.target.value);
     setSelectedDate(newDate);
-    // Notify parent to update the view
     if (typeof onAddAppointment === 'function') {
-      // Use onAddAppointment as a date change handler for now
-      // (parent should update selectedDate in App.js)
       onAddAppointment(newDate);
     }
   };
@@ -42,6 +49,15 @@ const MobileDayView = ({ date, appointments, onAppointmentClick, onAddAppointmen
       const appointmentDate = new Date(appointment.date);
       return appointmentDate.toDateString() === targetDate.toDateString();
     }).sort((a, b) => new Date(a.date) - new Date(b.date));
+  };
+
+  const getPatientName = (id) => {
+    const p = entities.patients.find(p => p.id === id);
+    return p ? p.name : '';
+  };
+  const getDoctorName = (id) => {
+    const d = entities.doctors.find(d => d.id === id);
+    return d ? d.name : '';
   };
 
   const dayAppointments = getAppointmentsForDate(selectedDate);
@@ -99,7 +115,8 @@ const MobileDayView = ({ date, appointments, onAppointmentClick, onAddAppointmen
               
               <div className="appointment-details">
                 <div className="patient-name">
-                  {appointment.patientName}
+                  {getPatientName(appointment.patientId)}
+                  <span style={{color: '#888', fontSize: '0.9em'}}> ({getDoctorName(appointment.doctorId)})</span>
                 </div>
                 
                 <div className="appointment-meta">
