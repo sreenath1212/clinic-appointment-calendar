@@ -38,6 +38,15 @@ const AppointmentForm = ({ appointment, onSave, onCancel }) => {
     }
   }, [appointment]);
 
+  const formatTime12Hour = (timeString) => {
+    if (!timeString) return '';
+    const [hours, minutes] = timeString.split(':');
+    const hour = parseInt(hours, 10);
+    const ampm = hour >= 12 ? 'PM' : 'AM';
+    const displayHour = hour % 12 || 12;
+    return `${displayHour}:${minutes} ${ampm}`;
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -156,6 +165,11 @@ const AppointmentForm = ({ appointment, onSave, onCancel }) => {
               min={formData.date === new Date().toISOString().split('T')[0] ? new Date().toTimeString().slice(0, 5) : undefined}
               required
             />
+            {formData.time && (
+              <small style={{ color: '#666', marginTop: '0.25rem', display: 'block' }}>
+                {formatTime12Hour(formData.time)}
+              </small>
+            )}
           </div>
           <div className="form-group">
             <label htmlFor="duration">Duration (minutes)</label>

@@ -72,6 +72,15 @@ const CalendarView = ({ appointments, onDateSelect, onAppointmentClick, onDelete
     return d ? d.name : '';
   };
 
+  const formatTime12Hour = (timeString) => {
+    if (!timeString) return '';
+    const [hours, minutes] = timeString.split(':');
+    const hour = parseInt(hours, 10);
+    const ampm = hour >= 12 ? 'PM' : 'AM';
+    const displayHour = hour % 12 || 12;
+    return `${displayHour}:${minutes} ${ampm}`;
+  };
+
   const isCurrentMonth = (date) => {
     return date.getMonth() === currentDate.getMonth();
   };
@@ -145,7 +154,7 @@ const CalendarView = ({ appointments, onDateSelect, onAppointmentClick, onDelete
                           className="appointment-content"
                           onClick={(e) => handleAppointmentClick(appointment, e)}
                         >
-                          <span style={{fontWeight: 600}}>{appointment.time}</span>{' '}
+                          <span style={{fontWeight: 600}}>{formatTime12Hour(appointment.time)}</span>{' '}
                           <span style={{color: '#333', fontSize: '0.85em'}}>{getPatientName(appointment.patientId)}</span>
                           <span style={{color: '#888', fontSize: '0.8em'}}> ({getDoctorName(appointment.doctorId)})</span>
                         </div>

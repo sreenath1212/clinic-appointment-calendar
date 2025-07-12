@@ -181,6 +181,13 @@ function App() {
         {showForm ? (
           <div className="form-overlay">
             <div className="form-container">
+              <button 
+                className="form-close-btn"
+                onClick={handleCancelForm}
+                title="Close form"
+              >
+                ×
+              </button>
               <AppointmentForm
                 appointment={selectedAppointment}
                 onSave={handleSaveAppointment}

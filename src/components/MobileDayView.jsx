@@ -34,6 +34,15 @@ const MobileDayView = ({ date, appointments, onAppointmentClick, onAddAppointmen
     });
   };
 
+  const formatTime12Hour = (timeString) => {
+    if (!timeString) return '';
+    const [hours, minutes] = timeString.split(':');
+    const hour = parseInt(hours, 10);
+    const ampm = hour >= 12 ? 'PM' : 'AM';
+    const displayHour = hour % 12 || 12;
+    return `${displayHour}:${minutes} ${ampm}`;
+  };
+
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', { 
@@ -111,7 +120,7 @@ const MobileDayView = ({ date, appointments, onAppointmentClick, onAddAppointmen
               onClick={() => onAppointmentClick(appointment)}
             >
               <div className="appointment-time">
-                {formatTime(appointment.date)}
+                {formatTime12Hour(appointment.time)}
               </div>
               
               <div className="appointment-details">
