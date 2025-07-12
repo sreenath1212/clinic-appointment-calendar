@@ -1107,9 +1107,9 @@ body {
     font-size: 0.95rem;
   }
   
-  /* Hide toolbar on mobile since day view is primary */
   .toolbar {
-    display: none;
+    flex-wrap: wrap;
+    gap: 0.5rem;
   }
   
   .appointment-filter {
