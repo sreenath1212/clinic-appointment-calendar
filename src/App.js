@@ -4,30 +4,37 @@ import Login from './components/Login';
 import CalendarView from './components/CalendarView';
 import AppointmentForm from './components/AppointmentForm';
 import MobileDayView from './components/MobileDayView';
-import { getAppointments, addAppointment, updateAppointment, deleteAppointment, initializeStorage } from './utils/localStorageHelpers';
-import { authenticateUser, getCurrentUser, setCurrentUser, logout } from './utils/localStorageHelpers';
+import { 
+  loadAppointmentsFromStorage, 
+  saveAppointmentsToStorage,
+  addAppointmentToState,
+  updateAppointmentInState,
+  deleteAppointmentFromState,
+  validateAppointment,
+  checkForConflicts
+} from './utils/appointmentStateManager';
 
 const STAFF_EMAIL = 'staff@clinic.com';
 const STAFF_PASSWORD = '123456';
 const SESSION_KEY = 'clinic_staff_logged_in';
 
 function App() {
+  // React state for appointments - single source of truth
+  const [appointments, setAppointments] = useState([]);
   const [loggedIn, setLoggedIn] = useState(() => {
     return localStorage.getItem(SESSION_KEY) === 'true';
   });
-  const [appointments, setAppointments] = useState([]);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [selectedAppointment, setSelectedAppointment] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [viewMode, setViewMode] = useState('calendar'); // 'calendar' or 'mobile'
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
+  // Load appointments from localStorage on component mount
   useEffect(() => {
-    // Load appointments from localStorage or initialize
-    const stored = localStorage.getItem('clinic_appointments');
-    if (stored) {
-      setAppointments(JSON.parse(stored));
-    }
+    const initialAppointments = loadAppointmentsFromStorage();
+    setAppointments(initialAppointments);
+    
     // Handle window resize for mobile detection
     const handleResize = () => {
       setIsMobile(window.innerWidth <= 768);
@@ -35,6 +42,11 @@ function App() {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  // Persist appointments to localStorage whenever appointments state changes
+  useEffect(() => {
+    saveAppointmentsToStorage(appointments);
+  }, [appointments]);
 
   const handleLogin = ({ email, password }) => {
     if (email === STAFF_EMAIL && password === STAFF_PASSWORD) {
@@ -68,18 +80,33 @@ function App() {
     setShowForm(true);
   };
 
+  // React state management for appointments
   const handleSaveAppointment = (appointmentData) => {
-    if (selectedAppointment) {
-      // Update existing appointment
-      updateAppointment(appointmentData);
-    } else {
-      // Add new appointment
-      addAppointment(appointmentData);
+    // Validate appointment data
+    const errors = validateAppointment(appointmentData);
+    if (errors.length > 0) {
+      alert('Please fix the following errors:\n' + errors.join('\n'));
+      return;
     }
-    
-    // Refresh appointments list
-    const updatedAppointments = getAppointments();
-    setAppointments(updatedAppointments);
+
+    // Check for conflicts
+    const hasConflicts = checkForConflicts(appointments, appointmentData, selectedAppointment?.id);
+    if (hasConflicts) {
+      alert('This appointment conflicts with an existing appointment. Please choose a different time.');
+      return;
+    }
+
+    if (selectedAppointment) {
+      // Update existing appointment using React state
+      setAppointments(prevAppointments => 
+        updateAppointmentInState(prevAppointments, appointmentData)
+      );
+    } else {
+      // Add new appointment using React state
+      setAppointments(prevAppointments => 
+        addAppointmentToState(prevAppointments, appointmentData)
+      );
+    }
     
     setShowForm(false);
     setSelectedAppointment(null);
@@ -87,9 +114,10 @@ function App() {
 
   const handleDeleteAppointment = (appointmentId) => {
     if (window.confirm('Are you sure you want to delete this appointment?')) {
-      deleteAppointment(appointmentId);
-      const updatedAppointments = getAppointments();
-      setAppointments(updatedAppointments);
+      // Delete appointment using React state
+      setAppointments(prevAppointments => 
+        deleteAppointmentFromState(prevAppointments, appointmentId)
+      );
       setShowForm(false);
       setSelectedAppointment(null);
     }
