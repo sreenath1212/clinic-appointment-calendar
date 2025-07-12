@@ -143,16 +143,52 @@ export const updateSetting = (key, value) => {
 
 // Data migration and initialization
 export const initializeStorage = () => {
-  // Check if this is the first time running the app
-  const isFirstRun = !localStorage.getItem(STORAGE_KEYS.APPOINTMENTS);
-  
-  if (isFirstRun) {
-    // Import sample data for first run
-    import('../data/staticData').then(({ sampleAppointments, sampleUsers }) => {
-      saveAppointments(sampleAppointments);
-      saveUsers(sampleUsers);
-      console.log('Initialized storage with sample data');
-    });
+  try {
+    // Check if appointments exist, if not initialize with sample data
+    const existingAppointments = localStorage.getItem('clinic_appointments');
+    if (!existingAppointments) {
+      const sampleAppointments = [
+        {
+          id: '1',
+          patientId: 'p1',
+          doctorId: 'd1',
+          date: '2024-01-15T09:00:00.000Z',
+          time: '09:00',
+          duration: 30,
+          type: 'consultation',
+          notes: 'Initial consultation',
+          phone: '555-0101',
+          email: 'john.smith@email.com'
+        },
+        {
+          id: '2',
+          patientId: 'p2',
+          doctorId: 'd2',
+          date: '2024-01-15T10:00:00.000Z',
+          time: '10:00',
+          duration: 45,
+          type: 'follow-up',
+          notes: 'Follow-up appointment',
+          phone: '555-0102',
+          email: 'sarah.johnson@email.com'
+        },
+        {
+          id: '3',
+          patientId: 'p3',
+          doctorId: 'd1',
+          date: '2024-01-16T14:00:00.000Z',
+          time: '14:00',
+          duration: 60,
+          type: 'procedure',
+          notes: 'Routine procedure',
+          phone: '555-0103',
+          email: 'michael.brown@email.com'
+        }
+      ];
+      localStorage.setItem('clinic_appointments', JSON.stringify(sampleAppointments));
+    }
+  } catch (error) {
+    console.error('Error initializing storage:', error);
   }
 };
 

@@ -65,13 +65,9 @@ export const loadAppointmentsFromStorage = () => {
 // Save appointments to localStorage
 export const saveAppointmentsToStorage = (appointments) => {
   try {
-    console.log('Saving appointments to localStorage:', appointments);
     localStorage.setItem(APPOINTMENTS_KEY, JSON.stringify(appointments));
-    console.log('Appointments saved successfully');
-    return true;
   } catch (error) {
     console.error('Error saving appointments to localStorage:', error);
-    return false;
   }
 };
 
@@ -79,11 +75,8 @@ export const saveAppointmentsToStorage = (appointments) => {
 export const clearAppointmentsFromStorage = () => {
   try {
     localStorage.removeItem(APPOINTMENTS_KEY);
-    console.log('Appointments cleared from localStorage');
-    return true;
   } catch (error) {
     console.error('Error clearing appointments from localStorage:', error);
-    return false;
   }
 };
 
@@ -99,18 +92,12 @@ export const updateAppointmentInState = (appointments, updatedAppointment) => {
 };
 
 export const deleteAppointmentFromState = (appointments, appointmentId) => {
-  console.log('Deleting appointment with ID:', appointmentId, 'Type:', typeof appointmentId);
-  console.log('Current appointments:', appointments);
-  
-  const filtered = appointments.filter(appointment => {
-    console.log('Checking appointment ID:', appointment.id, 'Type:', typeof appointment.id);
-    const shouldKeep = appointment.id !== appointmentId && appointment.id !== appointmentId.toString();
-    console.log('Should keep appointment:', shouldKeep);
-    return shouldKeep;
+  return appointments.filter(appointment => {
+    // Handle both string and number IDs
+    const appointmentIdStr = appointment.id.toString();
+    const targetIdStr = appointmentId.toString();
+    return appointmentIdStr !== targetIdStr;
   });
-  
-  console.log('Filtered appointments:', filtered);
-  return filtered;
 };
 
 // Utility functions for appointment management
@@ -184,68 +171,6 @@ export const checkForConflicts = (appointments, newAppointment, excludeId = null
     
     return sameDate && timeOverlap && (sameDoctor || samePatient);
   });
-};
-
-// Test function to verify conflict detection
-export const testConflictDetection = () => {
-  const testAppointments = [
-    {
-      id: '1',
-      patientId: 'p1',
-      doctorId: 'd1',
-      date: '2024-01-15T09:00:00.000Z',
-      time: '09:00',
-      duration: 30
-    },
-    {
-      id: '2',
-      patientId: 'p2',
-      doctorId: 'd2',
-      date: '2024-01-15T09:00:00.000Z',
-      time: '09:00',
-      duration: 30
-    }
-  ];
-
-  // Test 1: Same doctor, same time - should conflict
-  const test1 = {
-    patientId: 'p3',
-    doctorId: 'd1', // Same doctor as appointment 1
-    date: '2024-01-15T09:00:00.000Z',
-    time: '09:00',
-    duration: 30
-  };
-  console.log('Test 1 - Same doctor conflict:', checkForConflicts(testAppointments, test1));
-
-  // Test 2: Same patient, same time - should conflict
-  const test2 = {
-    patientId: 'p1', // Same patient as appointment 1
-    doctorId: 'd3',
-    date: '2024-01-15T09:00:00.000Z',
-    time: '09:00',
-    duration: 30
-  };
-  console.log('Test 2 - Same patient conflict:', checkForConflicts(testAppointments, test2));
-
-  // Test 3: Different doctor and patient, same time - should NOT conflict
-  const test3 = {
-    patientId: 'p3',
-    doctorId: 'd3',
-    date: '2024-01-15T09:00:00.000Z',
-    time: '09:00',
-    duration: 30
-  };
-  console.log('Test 3 - No conflict (different doctor/patient):', checkForConflicts(testAppointments, test3));
-
-  // Test 4: Same doctor, different time - should NOT conflict
-  const test4 = {
-    patientId: 'p3',
-    doctorId: 'd1', // Same doctor as appointment 1
-    date: '2024-01-15T10:00:00.000Z', // Different time
-    time: '10:00',
-    duration: 30
-  };
-  console.log('Test 4 - No conflict (different time):', checkForConflicts(testAppointments, test4));
 };
 
 // Export constants

@@ -13,9 +13,7 @@ import {
   updateAppointmentInState,
   deleteAppointmentFromState,
   validateAppointment,
-  checkForConflicts,
-  clearAppointmentsFromStorage,
-  testConflictDetection
+  checkForConflicts
 } from './utils/appointmentStateManager';
 
 const STAFF_EMAIL = 'staff@clinic.com';
@@ -190,13 +188,9 @@ function App() {
   };
 
   const handleDeleteAppointment = (appointmentId) => {
-    console.log('handleDeleteAppointment called with ID:', appointmentId);
     if (window.confirm('Are you sure you want to delete this appointment?')) {
-      console.log('Delete confirmed, updating appointments state');
       setAppointments(prevAppointments => {
-        console.log('Previous appointments:', prevAppointments);
         const updated = deleteAppointmentFromState(prevAppointments, appointmentId);
-        console.log('Updated appointments:', updated);
         return updated;
       });
       // Close the form if it's open
@@ -211,23 +205,6 @@ function App() {
 
   const handleDarkModeToggle = () => {
     setIsDarkMode(!isDarkMode);
-  };
-
-  // Debug function to test delete functionality
-  const handleDebugClear = () => {
-    if (window.confirm('Clear all appointments and reset to sample data?')) {
-      clearAppointmentsFromStorage();
-      const initialAppointments = loadAppointmentsFromStorage();
-      setAppointments(initialAppointments);
-      alert('Appointments reset to sample data');
-    }
-  };
-
-  // Debug function to test conflict detection
-  const handleDebugConflictTest = () => {
-    console.log('Running conflict detection tests...');
-    testConflictDetection();
-    alert('Conflict detection tests completed. Check console for results.');
   };
 
   // Filter appointments based on current filters
@@ -253,20 +230,14 @@ function App() {
         <div className="user-info">
           <DarkModeToggle isDarkMode={isDarkMode} onToggle={handleDarkModeToggle} />
           <span>Welcome, Staff</span>
-          <button onClick={handleDebugClear} className="logout-btn" style={{ marginRight: '10px' }}>
-            Debug Reset
-          </button>
-          <button onClick={handleDebugConflictTest} className="logout-btn" style={{ marginRight: '10px' }}>
-            Debug Conflict Test
-          </button>
           <button onClick={handleLogout} className="logout-btn">Logout</button>
         </div>
       </header>
 
       <main className="app-main">
         {showForm ? (
-          <div className="form-overlay">
-            <div className="form-container">
+          <div className="form-overlay" onClick={handleCancelForm}>
+            <div className="form-container" onClick={(e) => e.stopPropagation()}>
               <button 
                 className="form-close-btn"
                 onClick={handleCancelForm}

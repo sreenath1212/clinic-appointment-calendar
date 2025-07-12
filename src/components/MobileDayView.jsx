@@ -320,9 +320,6 @@ const MobileDayView = ({ date, appointments, onAppointmentClick, onAddAppointmen
                   <p>
                     {dayAppointments.length} appointment{dayAppointments.length !== 1 ? 's' : ''}
                   </p>
-                  <p>
-                    Total duration: {dayAppointments.reduce((total, apt) => total + (apt.duration || 30), 0)} minutes
-                  </p>
                 </div>
               )}
             </div>
