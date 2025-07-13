@@ -5,10 +5,13 @@ const loadEntities = async () => {
   return data;
 };
 
-const CalendarView = ({ appointments, onDateSelect, onAppointmentClick, onDeleteAppointment }) => {
+const CalendarView = ({ appointments, onDateSelect, onAppointmentClick, onDeleteAppointment, isMobile }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [calendarDays, setCalendarDays] = useState([]);
   const [entities, setEntities] = useState({ patients: [], doctors: [] });
+  const [showModal, setShowModal] = useState(false);
+  const [modalAppointments, setModalAppointments] = useState([]);
+  const [modalDate, setModalDate] = useState(null);
 
   const generateCalendarDays = useCallback(() => {
     const year = currentDate.getFullYear();
@@ -135,9 +138,25 @@ const CalendarView = ({ appointments, onDateSelect, onAppointmentClick, onDelete
                 key={index}
                 className={`calendar-day ${!isCurrentMonth ? 'other-month' : ''} ${isToday(date) ? 'today' : ''} ${isPastDate(date) ? 'past-date' : ''}`}
                 onClick={isCurrentMonth && !isPastDate(date) ? () => handleDateClick(date) : undefined}
-                style={{ cursor: isCurrentMonth && !isPastDate(date) ? 'pointer' : 'default' }}
+                style={{ cursor: isCurrentMonth && !isPastDate(date) ? 'pointer' : 'default', position: 'relative' }}
               >
                 <span className="day-number">{date.getDate()}</span>
+                {/* Show star icon on mobile if there are appointments */}
+                {isMobile && isCurrentMonth && dayAppointments.length > 0 && (
+                  <span
+                    className="star-appointments"
+                    style={{ position: 'absolute', top: 4, right: 6, fontSize: '1.1em', color: '#FFD700', cursor: 'pointer', zIndex: 2 }}
+                    onClick={e => {
+                      e.stopPropagation();
+                      setModalAppointments(dayAppointments);
+                      setModalDate(new Date(date));
+                      setShowModal(true);
+                    }}
+                    title="View all appointments for this day"
+                  >
+                    ⭐
+                  </span>
+                )}
                 {isCurrentMonth && (
                   <div className="appointments">
                     {dayAppointments.slice(0, 3).map((appointment, idx) => (
@@ -175,6 +194,32 @@ const CalendarView = ({ appointments, onDateSelect, onAppointmentClick, onDelete
           })}
         </div>
       </div>
+
+      {/* Modal for mobile: show all appointments for a day */}
+      {isMobile && showModal && (
+        <div className="form-overlay" style={{zIndex: 2000}} onClick={() => setShowModal(false)}>
+          <div className="form-container" style={{maxWidth: 400, width: '95vw', padding: 20}} onClick={e => e.stopPropagation()}>
+            <button className="form-close-btn" onClick={() => setShowModal(false)} title="Close">×</button>
+            <h3 style={{textAlign: 'center', marginBottom: 16}}>
+              Appointments for {modalDate && modalDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+            </h3>
+            {modalAppointments.length === 0 ? (
+              <div style={{textAlign: 'center', color: '#888'}}>No appointments scheduled</div>
+            ) : (
+              <ul style={{listStyle: 'none', padding: 0, margin: 0}}>
+                {modalAppointments.map((appointment, idx) => (
+                  <li key={appointment.id || idx} style={{marginBottom: 16, borderBottom: '1px solid #eee', paddingBottom: 8}}>
+                    <div style={{fontWeight: 600, color: '#667eea'}}>{formatTime12Hour(appointment.time)}</div>
+                    <div style={{fontSize: '1em', fontWeight: 500}}>{getPatientName(appointment.patientId)} <span style={{color: '#888', fontSize: '0.9em'}}>({getDoctorName(appointment.doctorId)})</span></div>
+                    <div style={{fontSize: '0.95em', color: '#555'}}>{appointment.type}</div>
+                    {appointment.notes && <div style={{fontSize: '0.9em', color: '#888'}}>📝 {appointment.notes}</div>}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

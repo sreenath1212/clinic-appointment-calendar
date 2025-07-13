@@ -318,6 +318,7 @@ function App() {
                 onDateSelect={handleDateSelect}
                 onAppointmentClick={handleAppointmentClick}
                 onDeleteAppointment={handleDeleteAppointment}
+                isMobile={isMobile}
               />
             ) : (
               <MobileDayView
