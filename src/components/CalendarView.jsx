@@ -106,6 +106,18 @@ const CalendarView = ({ appointments, onDateSelect, onAppointmentClick, onDelete
     }
   };
 
+  // Add this helper for type color
+  const getTypeColor = (type) => {
+    const colors = {
+      consultation: '#4CAF50',
+      'follow-up': '#2196F3',
+      emergency: '#F44336',
+      routine: '#FF9800',
+      procedure: '#9C27B0'
+    };
+    return colors[type] || '#757575';
+  };
+
   return (
     <div className="calendar-view">
       <div className="calendar-header">
@@ -165,18 +177,34 @@ const CalendarView = ({ appointments, onDateSelect, onAppointmentClick, onDelete
                         className="appointment-indicator"
                         title={`${appointment.time} - ${getPatientName(appointment.patientId)} with ${getDoctorName(appointment.doctorId)}`}
                         onClick={e => { e.stopPropagation(); onAppointmentClick(appointment); }}
+                        style={{
+                          background: getTypeColor(appointment.type),
+                          color: '#fff',
+                          borderLeft: `6px solid ${getTypeColor(appointment.type)}`,
+                          marginBottom: 6,
+                          borderRadius: 8,
+                          boxShadow: '0 2px 8px rgba(0,0,0,0.10)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 6,
+                          minHeight: 32,
+                          cursor: 'pointer',
+                          transition: 'box-shadow 0.2s, transform 0.2s',
+                        }}
+                        onMouseOver={e => { e.currentTarget.style.boxShadow = '0 4px 16px rgba(0,0,0,0.18)'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
+                        onMouseOut={e => { e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.10)'; e.currentTarget.style.transform = 'none'; }}
                       >
                         <div 
                           className="appointment-content"
+                          style={{flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}
                         >
-                          <span style={{fontWeight: 600}}>{formatTime12Hour(appointment.time)}</span>{' '}
-                          <span style={{color: '#333', fontSize: '0.85em'}}>{getPatientName(appointment.patientId)}</span>
-                          <span style={{color: '#888', fontSize: '0.8em'}}> ({getDoctorName(appointment.doctorId)})</span>
+                          <span style={{fontWeight: 700, color: '#fff'}}>{formatTime12Hour(appointment.time)}</span>
                         </div>
                         <button
                           className="delete-appointment-btn"
                           onClick={e => { e.stopPropagation(); handleDeleteAppointment(appointment, e); }}
                           title="Delete appointment"
+                          style={{background: 'rgba(255,255,255,0.18)', color: '#fff'}}
                         >
                           ×
                         </button>
