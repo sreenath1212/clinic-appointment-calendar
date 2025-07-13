@@ -137,15 +137,14 @@ const CalendarView = ({ appointments, onDateSelect, onAppointmentClick, onDelete
               <div
                 key={index}
                 className={`calendar-day ${!isCurrentMonth ? 'other-month' : ''} ${isToday(date) ? 'today' : ''} ${isPastDate(date) ? 'past-date' : ''}`}
-                onClick={isCurrentMonth && !isPastDate(date) ? () => handleDateClick(date) : undefined}
-                style={{ cursor: isCurrentMonth && !isPastDate(date) ? 'pointer' : 'default', position: 'relative' }}
+                style={{ cursor: isCurrentMonth && !isPastDate(date) ? 'pointer' : 'default', position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}
               >
                 <span className="day-number">{date.getDate()}</span>
-                {/* Show star icon on mobile if there are appointments */}
+                {/* Mobile: Only show a single centered star if there are appointments */}
                 {isMobile && isCurrentMonth && dayAppointments.length > 0 && (
                   <span
                     className="star-appointments"
-                    style={{ position: 'absolute', top: 4, right: 6, fontSize: '1.1em', color: '#FFD700', cursor: 'pointer', zIndex: 2 }}
+                    style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', fontSize: '1.6em', color: '#FFD700', cursor: 'pointer', zIndex: 2 }}
                     onClick={e => {
                       e.stopPropagation();
                       setModalAppointments(dayAppointments);
@@ -157,7 +156,8 @@ const CalendarView = ({ appointments, onDateSelect, onAppointmentClick, onDelete
                     ⭐
                   </span>
                 )}
-                {isCurrentMonth && (
+                {/* Desktop: Show appointment indicators as before */}
+                {!isMobile && isCurrentMonth && (
                   <div className="appointments">
                     {dayAppointments.slice(0, 3).map((appointment, idx) => (
                       <div
@@ -213,6 +213,10 @@ const CalendarView = ({ appointments, onDateSelect, onAppointmentClick, onDelete
                     <div style={{fontSize: '1em', fontWeight: 500}}>{getPatientName(appointment.patientId)} <span style={{color: '#888', fontSize: '0.9em'}}>({getDoctorName(appointment.doctorId)})</span></div>
                     <div style={{fontSize: '0.95em', color: '#555'}}>{appointment.type}</div>
                     {appointment.notes && <div style={{fontSize: '0.9em', color: '#888'}}>📝 {appointment.notes}</div>}
+                    <div style={{marginTop: 8, display: 'flex', gap: 8}}>
+                      <button className="action-btn" onClick={() => onAppointmentClick(appointment)}>Edit</button>
+                      <button className="action-btn delete-action-btn" onClick={() => { if (window.confirm(`Are you sure you want to delete the appointment for ${getPatientName(appointment.patientId)}?`)) { onDeleteAppointment(appointment.id); setShowModal(false); } }}>Delete</button>
+                    </div>
                   </li>
                 ))}
               </ul>
