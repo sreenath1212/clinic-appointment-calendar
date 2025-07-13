@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/clinic-appointment-calendar/static/css/main.abdd878f.css",
-    "main.js": "/clinic-appointment-calendar/static/js/main.aa3bc673.js",
+    "main.js": "/clinic-appointment-calendar/static/js/main.9d08c109.js",
     "static/js/453.de1f210a.chunk.js": "/clinic-appointment-calendar/static/js/453.de1f210a.chunk.js",
     "index.html": "/clinic-appointment-calendar/index.html",
     "main.abdd878f.css.map": "/clinic-appointment-calendar/static/css/main.abdd878f.css.map",
-    "main.aa3bc673.js.map": "/clinic-appointment-calendar/static/js/main.aa3bc673.js.map",
+    "main.9d08c109.js.map": "/clinic-appointment-calendar/static/js/main.9d08c109.js.map",
     "453.de1f210a.chunk.js.map": "/clinic-appointment-calendar/static/js/453.de1f210a.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.abdd878f.css",
-    "static/js/main.aa3bc673.js"
+    "static/js/main.9d08c109.js"
   ]
 }
