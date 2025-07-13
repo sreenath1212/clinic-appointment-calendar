@@ -157,12 +157,12 @@ const MobileDayView = ({ date, appointments, onAppointmentClick, onAddAppointmen
       <div className="quick-day-nav">
         <button 
           className="quick-nav-btn"
-          onClick={() => setSelectedDate(prev => {
-            const d = new Date(prev);
+          onClick={() => {
+            const d = new Date(selectedDate);
             d.setDate(d.getDate() - 1);
             d.setHours(0, 0, 0, 0);
-            return d;
-          })}
+            setSelectedDate(d);
+          }}
         >
           Yesterday
         </button>
@@ -174,12 +174,12 @@ const MobileDayView = ({ date, appointments, onAppointmentClick, onAddAppointmen
         </button>
         <button 
           className="quick-nav-btn"
-          onClick={() => setSelectedDate(prev => {
-            const d = new Date(prev);
+          onClick={() => {
+            const d = new Date(selectedDate);
             d.setDate(d.getDate() + 1);
             d.setHours(0, 0, 0, 0);
-            return d;
-          })}
+            setSelectedDate(d);
+          }}
         >
           Tomorrow
         </button>
