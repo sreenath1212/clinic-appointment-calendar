@@ -94,10 +94,6 @@ const CalendarView = ({ appointments, onDateSelect, onAppointmentClick, onDelete
     return date < today;
   };
 
-  const handleDateClick = (date) => {
-    onDateSelect(date);
-  };
-
   const handleAppointmentClick = (appointment, e) => {
     e.stopPropagation();
     onAppointmentClick(appointment);
