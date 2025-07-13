@@ -34,8 +34,12 @@ const MobileDayView = ({ date, appointments, onAppointmentClick, onAddAppointmen
   }, [selectedDate]);
 
   const handleDateChange = (e) => {
-    const newDate = new Date(e.target.value);
-    setSelectedDate(newDate);
+    if (!e.target.value) {
+      setSelectedDate(getToday());
+    } else {
+      const newDate = new Date(e.target.value);
+      setSelectedDate(newDate);
+    }
   };
 
   const navigateToDay = (direction) => {
