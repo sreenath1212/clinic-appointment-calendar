@@ -151,7 +151,6 @@ const MobileDayView = ({ date, appointments, onAppointmentClick, onAddAppointmen
             type="date"
             value={selectedDate.toISOString().split('T')[0]}
             onChange={handleDateChange}
-            min={new Date().toISOString().split('T')[0]}
             className="mobile-date-picker"
           />
           <div className="selected-date-display">
