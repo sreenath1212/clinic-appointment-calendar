@@ -37,7 +37,9 @@ const MobileDayView = ({ date, appointments, onAppointmentClick, onAddAppointmen
     if (!e.target.value) {
       setSelectedDate(getToday());
     } else {
-      const newDate = new Date(e.target.value);
+      // Parse as local date, not UTC
+      const [year, month, day] = e.target.value.split('-').map(Number);
+      const newDate = new Date(year, month - 1, day);
       setSelectedDate(newDate);
     }
   };
@@ -48,7 +50,7 @@ const MobileDayView = ({ date, appointments, onAppointmentClick, onAddAppointmen
     setSelectedDate(newDate);
   };
 
-  // Get exact dates for today
+  // Get exact dates for today - consistent with isToday function
   const getToday = () => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -110,8 +112,13 @@ const MobileDayView = ({ date, appointments, onAppointmentClick, onAddAppointmen
     return colors[type] || '#757575';
   };
 
+  // Consistent today check - normalize both dates to start of day
   const isToday = (date) => {
-    return date.toDateString() === new Date().toDateString();
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const normalizedDate = new Date(date);
+    normalizedDate.setHours(0, 0, 0, 0);
+    return normalizedDate.getTime() === today.getTime();
   };
 
   const isPastDate = (date) => {
@@ -135,7 +142,7 @@ const MobileDayView = ({ date, appointments, onAppointmentClick, onAddAppointmen
         <div className="date-picker-container">
           <input
             type="date"
-            value={selectedDate.toISOString().split('T')[0]}
+            value={`${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}`}
             onChange={handleDateChange}
             className="mobile-date-picker"
           />
@@ -158,10 +165,10 @@ const MobileDayView = ({ date, appointments, onAppointmentClick, onAddAppointmen
         <button 
           className="quick-nav-btn"
           onClick={() => {
-            const d = new Date(selectedDate);
-            d.setDate(d.getDate() - 1);
-            d.setHours(0, 0, 0, 0);
-            setSelectedDate(d);
+            const today = getToday();
+            const yesterday = new Date(today);
+            yesterday.setDate(today.getDate() - 1);
+            setSelectedDate(yesterday);
           }}
         >
           Yesterday
@@ -175,10 +182,10 @@ const MobileDayView = ({ date, appointments, onAppointmentClick, onAddAppointmen
         <button 
           className="quick-nav-btn"
           onClick={() => {
-            const d = new Date(selectedDate);
-            d.setDate(d.getDate() + 1);
-            d.setHours(0, 0, 0, 0);
-            setSelectedDate(d);
+            const today = getToday();
+            const tomorrow = new Date(today);
+            tomorrow.setDate(today.getDate() + 1);
+            setSelectedDate(tomorrow);
           }}
         >
           Tomorrow

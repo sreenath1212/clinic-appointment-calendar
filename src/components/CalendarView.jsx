@@ -84,8 +84,13 @@ const CalendarView = ({ appointments, onDateSelect, onAppointmentClick, onDelete
     return `${displayHour}:${minutes} ${ampm}`;
   };
 
+  // Consistent today check - normalize both dates to start of day
   const isToday = (date) => {
-    return date.toDateString() === new Date().toDateString();
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const normalizedDate = new Date(date);
+    normalizedDate.setHours(0, 0, 0, 0);
+    return normalizedDate.getTime() === today.getTime();
   };
 
   const isPastDate = (date) => {
