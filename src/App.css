@@ -1395,6 +1395,108 @@ body {
   box-shadow: none;
 }
 
+/* Dark mode mobile calendar improvements */
+@media (max-width: 600px) {
+  .App.dark-mode .calendar-day {
+    background-color: #3d3d3d;
+    border-color: #555;
+    color: #ffffff;
+  }
+  
+  .App.dark-mode .calendar-day:hover {
+    background: linear-gradient(135deg, #4d4d4d 0%, #5d5d5d 100%);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  }
+  
+  .App.dark-mode .calendar-day.today {
+    background: linear-gradient(135deg, #1e3a5f 0%, #2c5aa0 100%);
+    border-color: #3498db;
+    box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+  }
+  
+  .App.dark-mode .calendar-day.past-date {
+    background: linear-gradient(135deg, #2d2d2d 0%, #3d3d3d 100%);
+    opacity: 0.6;
+  }
+  
+  .App.dark-mode .calendar-day.other-month {
+    background: linear-gradient(135deg, #2d2d2d 0%, #3d3d3d 100%);
+    opacity: 0.5;
+  }
+  
+  .App.dark-mode .day-number {
+    color: #ffffff;
+  }
+  
+  .App.dark-mode .appointment-indicator {
+    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+    box-shadow: 0 2px 8px rgba(52, 152, 219, 0.3);
+    border-color: rgba(255, 255, 255, 0.3);
+  }
+  
+  .App.dark-mode .appointment-indicator:hover {
+    background: linear-gradient(135deg, #2980b9 0%, #1f5f8b 100%);
+    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
+  }
+  
+  .App.dark-mode .more-appointments {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: #e0e0e0;
+  }
+}
+
+/* Dark mode mobile calendar improvements for smaller screens */
+@media (max-width: 480px) {
+  .App.dark-mode .calendar-day {
+    background-color: #3d3d3d;
+    border-color: #555;
+    color: #ffffff;
+  }
+  
+  .App.dark-mode .calendar-day:hover {
+    background: linear-gradient(135deg, #4d4d4d 0%, #5d5d5d 100%);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  }
+  
+  .App.dark-mode .calendar-day.today {
+    background: linear-gradient(135deg, #1e3a5f 0%, #2c5aa0 100%);
+    border-color: #3498db;
+    box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+  }
+  
+  .App.dark-mode .calendar-day.past-date {
+    background: linear-gradient(135deg, #2d2d2d 0%, #3d3d3d 100%);
+    opacity: 0.6;
+  }
+  
+  .App.dark-mode .calendar-day.other-month {
+    background: linear-gradient(135deg, #2d2d2d 0%, #3d3d3d 100%);
+    opacity: 0.5;
+  }
+  
+  .App.dark-mode .day-number {
+    color: #ffffff;
+  }
+  
+  .App.dark-mode .appointment-indicator {
+    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+    box-shadow: 0 2px 8px rgba(52, 152, 219, 0.3);
+    border-color: rgba(255, 255, 255, 0.3);
+  }
+  
+  .App.dark-mode .appointment-indicator:hover {
+    background: linear-gradient(135deg, #2980b9 0%, #1f5f8b 100%);
+    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
+  }
+  
+  .App.dark-mode .more-appointments {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: #e0e0e0;
+  }
+}
+
 .App.dark-mode .calendar-day.today {
   background: linear-gradient(135deg, #1e3a5f 0%, #2c5aa0 100%);
   border-color: #3498db;
@@ -2447,80 +2549,167 @@ body {
 
 @media (max-width: 600px) {
   .calendar-view {
-    padding: 0.2rem 0.1rem;
+    padding: 0.5rem;
   }
   .calendar-header {
     flex-direction: column;
-    gap: 0.3rem;
-    padding: 0.3rem 0;
-    margin-bottom: 1rem;
+    gap: 0.5rem;
+    padding: 0.5rem 0;
+    margin-bottom: 1.5rem;
   }
   .calendar-header h2 {
-    font-size: 1rem;
+    font-size: 1.2rem;
   }
   .calendar-header button {
     font-size: 1rem;
-    padding: 0.5rem 0.7rem;
+    padding: 0.6rem 1rem;
     border-radius: 8px;
   }
   .calendar-grid {
-    min-height: unset;
-    border-radius: 6px;
-    grid-template-columns: repeat(7, minmax(32px, 1fr));
-    gap: 1px;
-    font-size: 0.8rem;
-    overflow-x: auto;
-    max-width: 100vw;
+    min-height: 500px;
+    border-radius: 12px;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+    font-size: 0.9rem;
+    overflow: hidden;
+    max-width: 100%;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
   }
   .weekday {
-    padding: 0.5rem 0.1rem;
-    font-size: 0.7rem;
+    padding: 0.8rem 0.3rem;
+    font-size: 0.8rem;
+    font-weight: 700;
   }
   .calendar-day {
-    min-height: 38px;
-    padding: 0.05rem;
-    font-size: 0.7rem;
-    border-radius: 4px;
+    min-height: 80px;
+    padding: 0.5rem;
+    font-size: 0.85rem;
+    border-radius: 6px;
     flex-direction: column;
     align-items: flex-start;
+    border: 1px solid #e1e8ed;
+    transition: all 0.3s ease;
+  }
+  .calendar-day:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    z-index: 2;
   }
   .day-number {
-    font-size: 0.8rem;
-    margin-bottom: 0.2rem;
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: #2c3e50;
   }
   .appointments {
-    font-size: 0.65rem;
-    max-height: 2.5rem;
+    font-size: 0.75rem;
+    max-height: calc(100% - 2rem);
     min-height: 0;
+    overflow-y: auto;
+    width: 100%;
   }
   .appointment-indicator {
-    font-size: 0.65rem;
-    border-radius: 5px;
-    min-height: 16px;
-    padding: 0.15rem 0.3rem;
-    margin-bottom: 0.1rem;
+    font-size: 0.7rem;
+    border-radius: 6px;
+    min-height: 24px;
+    padding: 0.4rem 0.6rem;
+    margin-bottom: 0.3rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.3rem;
+  }
+  .appointment-indicator:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+  .appointment-content {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    line-height: 1.2;
+  }
+  .delete-appointment-btn {
+    width: 20px;
+    height: 20px;
+    font-size: 0.8rem;
+    flex-shrink: 0;
   }
   .more-appointments {
-    font-size: 0.6rem;
-    border-radius: 4px;
-    padding: 0.1rem 0.2rem;
+    font-size: 0.7rem;
+    border-radius: 6px;
+    padding: 0.3rem 0.5rem;
+    background: rgba(108, 117, 125, 0.1);
+    border: 1px solid rgba(108, 117, 125, 0.2);
+    text-align: center;
+    font-weight: 600;
+  }
+  
+  /* Enhanced mobile calendar day states */
+  .calendar-day.today {
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+    border: 2px solid #2196f3;
+    box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);
+  }
+  
+  .calendar-day.past-date {
+    background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
+    opacity: 0.7;
+  }
+  
+  .calendar-day.other-month {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    opacity: 0.6;
   }
 }
 
 @media (max-width: 480px) {
+  .calendar-view {
+    padding: 0.3rem;
+  }
   .calendar-header h2 {
-    font-size: 0.9rem;
+    font-size: 1rem;
   }
   .calendar-grid {
-    grid-template-columns: repeat(7, minmax(28px, 1fr));
-    font-size: 0.7rem;
+    min-height: 400px;
+    grid-template-columns: repeat(7, 1fr);
+    font-size: 0.8rem;
+    gap: 1px;
+  }
+  .weekday {
+    padding: 0.6rem 0.2rem;
+    font-size: 0.75rem;
   }
   .calendar-day {
-    min-height: 28px;
-    font-size: 0.65rem;
+    min-height: 60px;
+    padding: 0.3rem;
+    font-size: 0.75rem;
   }
   .day-number {
+    font-size: 0.9rem;
+    margin-bottom: 0.3rem;
+  }
+  .appointments {
     font-size: 0.7rem;
+    max-height: calc(100% - 1.5rem);
+  }
+  .appointment-indicator {
+    font-size: 0.65rem;
+    min-height: 20px;
+    padding: 0.3rem 0.4rem;
+    margin-bottom: 0.2rem;
+  }
+  .delete-appointment-btn {
+    width: 18px;
+    height: 18px;
+    font-size: 0.7rem;
+  }
+  .more-appointments {
+    font-size: 0.65rem;
+    padding: 0.2rem 0.4rem;
   }
   
   /* Extra small mobile close button */
