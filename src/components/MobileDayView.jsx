@@ -48,25 +48,11 @@ const MobileDayView = ({ date, appointments, onAppointmentClick, onAddAppointmen
     setSelectedDate(newDate);
   };
 
-  // Get exact dates for today, yesterday, and tomorrow
+  // Get exact dates for today
   const getToday = () => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     return today;
-  };
-
-  const getYesterday = () => {
-    const yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() - 1);
-    yesterday.setHours(0, 0, 0, 0);
-    return yesterday;
-  };
-
-  const getTomorrow = () => {
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    tomorrow.setHours(0, 0, 0, 0);
-    return tomorrow;
   };
 
   const formatTime12Hour = (timeString) => {
