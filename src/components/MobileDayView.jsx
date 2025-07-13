@@ -10,6 +10,9 @@ const MobileDayView = ({ date, appointments, onAppointmentClick, onAddAppointmen
   const [entities, setEntities] = useState({ patients: [], doctors: [] });
   const [visibleDays, setVisibleDays] = useState([]);
   const scrollContainerRef = useRef(null);
+  const [showModal, setShowModal] = useState(false);
+  const [modalAppointments, setModalAppointments] = useState([]);
+  const [modalDate, setModalDate] = useState(null);
 
   useEffect(() => {
     setSelectedDate(date);
@@ -213,7 +216,13 @@ const MobileDayView = ({ date, appointments, onAppointmentClick, onAddAppointmen
                       ) {
                         return;
                       }
-                      onAddAppointment(dayDate);
+                      if (dayAppointments.length > 0) {
+                        setModalAppointments(dayAppointments);
+                        setModalDate(new Date(dayDate));
+                        setShowModal(true);
+                      } else {
+                        onAddAppointment(dayDate);
+                      }
                     }
                   : undefined
               }
@@ -332,6 +341,37 @@ const MobileDayView = ({ date, appointments, onAppointmentClick, onAddAppointmen
           );
         })}
       </div>
+
+      {/* Modal for mobile: show all appointments for a day */}
+      {showModal && (
+        <div className="form-overlay" style={{zIndex: 2000}} onClick={() => setShowModal(false)}>
+          <div className="form-container" style={{maxWidth: 400, width: '95vw', padding: 20}} onClick={e => e.stopPropagation()}>
+            <button className="form-close-btn" onClick={() => setShowModal(false)} title="Close">×</button>
+            <h3 style={{textAlign: 'center', marginBottom: 16}}>
+              Appointments for {modalDate && modalDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+            </h3>
+            {modalAppointments.length === 0 ? (
+              <div style={{textAlign: 'center', color: '#888'}}>No appointments scheduled</div>
+            ) : (
+              <ul style={{listStyle: 'none', padding: 0, margin: 0}}>
+                {modalAppointments.map((appointment, idx) => (
+                  <li key={appointment.id || idx} style={{marginBottom: 16, borderBottom: '1px solid #eee', paddingBottom: 8}}>
+                    <div style={{fontWeight: 600, color: '#667eea'}}>{formatTime12Hour(appointment.time)}</div>
+                    <div style={{fontSize: '1em', fontWeight: 500}}>{getPatientName(appointment.patientId)} <span style={{color: '#888', fontSize: '0.9em'}}>({getDoctorName(appointment.doctorId)})</span></div>
+                    <div style={{fontSize: '0.95em', color: '#555'}}>{appointment.type}</div>
+                    {appointment.notes && <div style={{fontSize: '0.9em', color: '#888'}}>📝 {appointment.notes}</div>}
+                    <div style={{marginTop: 8, display: 'flex', gap: 8}}>
+                      <button className="action-btn" onClick={() => { setShowModal(false); onAppointmentClick(appointment); }}>Edit</button>
+                      <button className="action-btn delete-action-btn" onClick={() => { if (window.confirm(`Are you sure you want to delete the appointment for ${getPatientName(appointment.patientId)}?`)) { onDeleteAppointment(appointment.id); setShowModal(false); } }}>Delete</button>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+            <button className="btn-primary" style={{width: '100%', marginTop: 16}} onClick={() => { setShowModal(false); onAddAppointment(modalDate); }}>+ Add Another Appointment</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

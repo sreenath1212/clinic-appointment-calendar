@@ -99,11 +99,6 @@ const CalendarView = ({ appointments, onDateSelect, onAppointmentClick, onDelete
     return date < today;
   };
 
-  const handleAppointmentClick = (appointment, e) => {
-    e.stopPropagation();
-    onAppointmentClick(appointment);
-  };
-
   const handleDeleteAppointment = (appointment, e) => {
     e.stopPropagation();
     if (window.confirm(`Are you sure you want to delete the appointment for ${getPatientName(appointment.patientId)}?`)) {
