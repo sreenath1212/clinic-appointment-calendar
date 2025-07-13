@@ -134,11 +134,21 @@ const CalendarView = ({ appointments, onDateSelect, onAppointmentClick, onDelete
           {calendarDays.map((dayData, index) => {
             const { date, isCurrentMonth } = dayData;
             const dayAppointments = isCurrentMonth ? getAppointmentsForDate(date) : [];
+            const isClickable = isCurrentMonth && !isPastDate(date);
             return (
               <div
                 key={index}
                 className={`calendar-day ${!isCurrentMonth ? 'other-month' : ''} ${isToday(date) ? 'today' : ''} ${isPastDate(date) ? 'past-date' : ''}`}
-                style={{ cursor: isCurrentMonth && !isPastDate(date) ? 'pointer' : 'default', position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}
+                style={{ cursor: isClickable ? 'pointer' : 'default', position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}
+                onClick={isClickable ? () => {
+                  if (dayAppointments.length > 0) {
+                    setModalAppointments(dayAppointments);
+                    setModalDate(new Date(date));
+                    setShowModal(true);
+                  } else {
+                    onDateSelect(new Date(date));
+                  }
+                } : undefined}
               >
                 <span className="day-number">{date.getDate()}</span>
                 {/* Mobile: Only show a single centered star if there are appointments */}
@@ -146,12 +156,6 @@ const CalendarView = ({ appointments, onDateSelect, onAppointmentClick, onDelete
                   <span
                     className="star-appointments"
                     style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', fontSize: '1.6em', color: '#FFD700', cursor: 'pointer', zIndex: 2 }}
-                    onClick={e => {
-                      e.stopPropagation();
-                      setModalAppointments(dayAppointments);
-                      setModalDate(new Date(date));
-                      setShowModal(true);
-                    }}
                     title="View all appointments for this day"
                   >
                     ⭐
@@ -165,10 +169,10 @@ const CalendarView = ({ appointments, onDateSelect, onAppointmentClick, onDelete
                         key={idx}
                         className="appointment-indicator"
                         title={`${appointment.time} - ${getPatientName(appointment.patientId)} with ${getDoctorName(appointment.doctorId)}`}
+                        onClick={e => { e.stopPropagation(); onAppointmentClick(appointment); }}
                       >
                         <div 
                           className="appointment-content"
-                          onClick={(e) => handleAppointmentClick(appointment, e)}
                         >
                           <span style={{fontWeight: 600}}>{formatTime12Hour(appointment.time)}</span>{' '}
                           <span style={{color: '#333', fontSize: '0.85em'}}>{getPatientName(appointment.patientId)}</span>
@@ -176,7 +180,7 @@ const CalendarView = ({ appointments, onDateSelect, onAppointmentClick, onDelete
                         </div>
                         <button
                           className="delete-appointment-btn"
-                          onClick={(e) => handleDeleteAppointment(appointment, e)}
+                          onClick={e => { e.stopPropagation(); handleDeleteAppointment(appointment, e); }}
                           title="Delete appointment"
                         >
                           ×
@@ -196,8 +200,8 @@ const CalendarView = ({ appointments, onDateSelect, onAppointmentClick, onDelete
         </div>
       </div>
 
-      {/* Modal for mobile: show all appointments for a day */}
-      {isMobile && showModal && (
+      {/* Modal for all devices: show all appointments for a day */}
+      {showModal && (
         <div className="form-overlay" style={{zIndex: 2000}} onClick={() => setShowModal(false)}>
           <div className="form-container" style={{maxWidth: 400, width: '95vw', padding: 20}} onClick={e => e.stopPropagation()}>
             <button className="form-close-btn" onClick={() => setShowModal(false)} title="Close">×</button>
@@ -215,13 +219,14 @@ const CalendarView = ({ appointments, onDateSelect, onAppointmentClick, onDelete
                     <div style={{fontSize: '0.95em', color: '#555'}}>{appointment.type}</div>
                     {appointment.notes && <div style={{fontSize: '0.9em', color: '#888'}}>📝 {appointment.notes}</div>}
                     <div style={{marginTop: 8, display: 'flex', gap: 8}}>
-                      <button className="action-btn" onClick={() => onAppointmentClick(appointment)}>Edit</button>
+                      <button className="action-btn" onClick={() => { setShowModal(false); onAppointmentClick(appointment); }}>Edit</button>
                       <button className="action-btn delete-action-btn" onClick={() => { if (window.confirm(`Are you sure you want to delete the appointment for ${getPatientName(appointment.patientId)}?`)) { onDeleteAppointment(appointment.id); setShowModal(false); } }}>Delete</button>
                     </div>
                   </li>
                 ))}
               </ul>
             )}
+            <button className="btn-primary" style={{width: '100%', marginTop: 16}} onClick={() => { setShowModal(false); onDateSelect(modalDate); }}>+ Add Another Appointment</button>
           </div>
         </div>
       )}
