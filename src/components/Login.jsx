@@ -33,6 +33,9 @@ const Login = ({ onLogin }) => {
             placeholder="Enter your email address"
             required
           />
+          <small style={{ color: '#888', fontSize: '0.9em', marginTop: '0.25rem', display: 'block' }}>
+            Hint: staff@clinic.com
+          </small>
         </div>
         <div className="form-group">
           <label htmlFor="password">🔒 Password</label>
@@ -45,6 +48,9 @@ const Login = ({ onLogin }) => {
             placeholder="Enter your password"
             required
           />
+          <small style={{ color: '#888', fontSize: '0.9em', marginTop: '0.25rem', display: 'block' }}>
+            Hint: 123456
+          </small>
         </div>
         <button type="submit">🚀 Sign In</button>
       </form>
